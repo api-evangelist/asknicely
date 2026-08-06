@@ -1,0 +1,962 @@
+openapi: 3.1.0
+info:
+  title: AskNicely API
+  version: v1
+  summary: Contact, survey-trigger, response, statistics and privacy operations for the AskNicely customer-experience (NPS/CSAT/5-Star) platform.
+  description: >-
+    The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star
+    surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests.
+    Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API
+    is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied
+    in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).
+
+
+    This document was assembled by API Evangelist from AskNicely's own public API reference at
+    https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names,
+    examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely
+    does not publish an OpenAPI/Swagger document of its own.
+  termsOfService: https://www.asknicely.com/terms
+  contact:
+    name: AskNicely Support
+    email: support@asknice.ly
+    url: https://asknicely.zendesk.com/hc/en-us
+  x-source: https://demo.asknice.ly/help/apidocs
+  x-generated-by: API Evangelist enrichment pipeline
+servers:
+  - url: https://{domain}.asknice.ly/api/v1
+    description: Per-tenant AskNicely API host. Replace {domain} with your AskNicely subdomain.
+    variables:
+      domain:
+        default: demo
+        description: Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).
+security:
+  - apiKeyAuth: []
+tags:
+  - name: Contacts
+    description: Import, look up, deactivate and privacy-delete contacts.
+  - name: Surveys
+    description: Trigger NPS/CSAT/5-Star surveys to contacts.
+  - name: Responses
+    description: Retrieve survey responses.
+  - name: Statistics
+    description: NPS, sent and historical survey statistics.
+paths:
+  /contact/trigger:
+    post:
+      operationId: triggerSurvey
+      tags: [Surveys, Contacts]
+      summary: Import a contact and trigger a survey
+      description: >-
+        Adds or updates a single contact and, subject to the first Global Contact Rule configured on the
+        Send page, sends them a survey. Contacts whose address is on the Blocklist are not imported.
+        Multi-value custom fields are not supported here — use the bulk endpoint. A separate, lower rate
+        limit applies to this operation (100 req/10s, 500 req/60s).
+      x-source: https://demo.asknice.ly/help/apidocs/survey
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TriggerSurveyRequest'
+      responses:
+        '200':
+          description: Request accepted. `survey_sent` indicates whether a survey was actually delivered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerSurveyResponse'
+              examples:
+                sent:
+                  summary: Successfully sent
+                  value:
+                    result:
+                      - survey_sent: true
+                        id: '15968'
+                        email: schrodinger@example.com
+                        msg: Message Sent
+                    success: true
+                    surveys_sent: 1
+                suppressedByContactRules:
+                  summary: Contact already surveyed within the contact-rule window
+                  value:
+                    result:
+                      - survey_sent: false
+                        id: '15968'
+                        email: schrodinger@example.com
+                        msg: >-
+                          You have already contacted this contact within the period of your contact rules,
+                          this request will be ignored. Add parameter '&triggeremail=true' to override
+                          contract rules and trigger this survey.
+                    success: true
+                    surveys_sent: 0
+                unsubscribed:
+                  summary: Contact is inactive or unsubscribed
+                  value:
+                    result:
+                      - survey_sent: false
+                        id: '15968'
+                        email: schrodinger@example.com
+                        msg: This contact has been de-activated or has un-subscribed, your survey will not be sent
+                    success: true
+                    surveys_sent: 0
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /contacts/add:
+    post:
+      operationId: bulkAddContacts
+      tags: [Contacts, Surveys]
+      summary: Bulk add or update contacts, optionally triggering surveys
+      description: >-
+        Asynchronous bulk import. Accepts a JSON body with a top-level `contacts` array; each contact
+        requires `email` and may carry `name`, `segment` and any number of custom data fields (suffix
+        `_c`), including multi-value arrays. Setting `"obeyrules": true` triggers surveys for eligible
+        contacts under the Global Contact Rules. Payload limit is 6MB. Valid payloads return HTTP 201
+        immediately and are processed asynchronously — no per-contact result is returned.
+      x-source: https://demo.asknice.ly/help/apidocs/bulkasync
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkAddRequest'
+            examples:
+              addAndSend:
+                summary: Bulk add/update and trigger surveys
+                value:
+                  contacts:
+                    - name: Jane Doe
+                      email: jane@example.com
+                      region: West
+                      account_owner: Sarah
+                    - name: John Smith
+                      email: john@example.com
+                      region: East
+                      account_owner: Tom
+                  obeyrules: true
+      responses:
+        '201':
+          description: Successfully added/updated; processing continues asynchronously.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+        '400':
+          description: >-
+            Contacts data missing, malformed JSON, or `contacts` is not an array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              examples:
+                noData:
+                  value: {success: false, msg: no data found}
+                malformed:
+                  value: {success: false, msg: 'Errors found in json - Syntax error, malformed JSON'}
+                notAnArray:
+                  value: {success: false, msg: 'if set, contacts must be an array'}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          description: Internal server error, or the request body exceeded 6MB.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              example:
+                success: false
+                msg: Internal Server Error
+  /contact/get/{search}/{key}:
+    get:
+      operationId: getContact
+      tags: [Contacts]
+      summary: Get a contact
+      description: Retrieve the details of a single contact, searched by email (default) or by any other contact property such as `id`.
+      x-source: https://demo.asknice.ly/help/apidocs/getcontact
+      parameters:
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/SearchKey'
+      responses:
+        '200':
+          description: The matching contact.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactEnvelope'
+              example:
+                success: true
+                data:
+                  id: '15816'
+                  lastemailed: '1452219376'
+                  active: '1'
+                  created: '1418350105'
+                  scheduled: '0'
+                  name: John Ballinger
+                  email: john@asknice.ly
+                  segment: VIP Customer
+                  importedattime: '1450653162'
+                  source: intercom
+                  intercomid: 548a4e19bcdac3592e0019b7
+                  unsubscribetime: null
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /contact/remove/{search}/{key}:
+    get:
+      operationId: removeContact
+      tags: [Contacts]
+      summary: Deactivate a contact
+      description: >-
+        Sets a contact to inactive. The contact is not deleted from AskNicely — re-adding the contact
+        reactivates them. Use the privacy endpoint for a true GDPR deletion.
+      x-source: https://demo.asknice.ly/help/apidocs/removecontact
+      parameters:
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/SearchKey'
+      responses:
+        '200':
+          description: The contact that was deactivated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactRemovedEnvelope'
+              example:
+                success: true
+                msg: removed
+                data:
+                  id: '15816'
+                  lastemailed: '1452219376'
+                  active: '1'
+                  created: '1418350105'
+                  scheduled: '0'
+                  name: John Ballinger
+                  email: john@asknice.ly
+                  segment: VIP Customer
+                  importedattime: '1450653162'
+                  source: intercom
+                  intercomid: 548a4e19bcdac3592e0019b7
+                  unsubscribetime: null
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /privacy/remove:
+    post:
+      operationId: privacyRemoveContacts
+      tags: [Contacts]
+      summary: Delete a contact's personal data (GDPR)
+      description: >-
+        Removes all personal data for the named contacts and adds them to the blocklist so they cannot be
+        re-added or surveyed. Intended for automated GDPR erasure requests. Accepts either a JSON body
+        with a `contacts` array of email addresses, or a form-encoded `email` parameter.
+      x-source: https://demo.asknice.ly/help/apidocs/gdprdelete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrivacyRemoveRequest'
+            example:
+              skipnotify: 1
+              contacts:
+                - john@asknice.ly
+                - john@example.com
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email of the contact to delete.
+                skipnotify:
+                  type: integer
+                  default: 0
+                  description: Set to 1 to suppress notifying the primary AskNicely user.
+      responses:
+        '200':
+          description: Contact personal data removed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+                msg: contact removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /contacts/unsubscribed:
+    get:
+      operationId: getUnsubscribedContacts
+      tags: [Contacts]
+      summary: List unsubscribed contacts
+      description: >-
+        Returns every contact that manually unsubscribed via the unsubscribe link in AskNicely survey
+        emails. Pagination is optional; when used, `pagenumber` must be set. `pagesize` defaults to 1000.
+      x-source: https://demo.asknice.ly/help/apidocs/getunsubscribed
+      parameters:
+        - name: pagenumber
+          in: query
+          required: false
+          description: Page to start from; must be greater than 0.
+          schema: {type: integer, minimum: 1}
+        - name: pagesize
+          in: query
+          required: false
+          description: Rows returned per page; must be greater than 0. Defaults to 1000.
+          schema: {type: integer, minimum: 1, default: 1000}
+      responses:
+        '200':
+          description: The unsubscribed contacts. `id` is the contact id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnsubscribedEnvelope'
+              example:
+                success: true
+                data:
+                  - id: '15816'
+                    unsubscribetime: '1452219376'
+                    email: test@example.com
+                  - id: '16838'
+                    unsubscribetime: '14522193485'
+                    email: test2@example.com
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /contacts/deactivateall:
+    post:
+      operationId: deactivateAllContacts
+      tags: [Contacts]
+      summary: Deactivate all contacts
+      description: >-
+        Deactivates every active contact in the account. No data is lost and contacts can be reactivated.
+        The endpoint returns HTTP 307 repeatedly until the operation completes, so the calling client
+        MUST follow redirects.
+      x-source: https://demo.asknice.ly/help/apidocs/deactivateall
+      responses:
+        '200':
+          description: All contacts deactivated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+                msg: Deactivated 121 contacts
+        '307':
+          description: Temporary redirect — work is still in progress. Follow the redirect and repeat.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /curlupload/{importerId}:
+    post:
+      operationId: uploadContactsCsv
+      tags: [Contacts]
+      summary: Bulk add contacts by uploading a CSV to a configured importer
+      description: >-
+        Uploads a CSV file to a CSV Importer previously configured in the CSV Importer App. The importer's
+        own settings determine how the data is mapped and whether surveys are sent. Payload limit is 6MB.
+      x-source: https://demo.asknice.ly/help/apidocs/bulkwithcsvimporter
+      parameters:
+        - name: importerId
+          in: path
+          required: true
+          description: The identifier of the CSV Importer, shown on the final step of the importer setup.
+          schema: {type: string}
+          example: '1234'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file, in the column format configured for this importer.
+      responses:
+        '200':
+          description: File accepted; it will be imported per the CSV Importer settings.
+        '401':
+          description: Invalid API key.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              example:
+                success: false
+                msg: Could not find user with API key
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /responses/{sortDirection}/{pagesize}/{pagenumber}/{sinceTime}/{format}:
+    get:
+      operationId: getResponses
+      tags: [Responses]
+      summary: Get survey responses
+      description: >-
+        Retrieves detailed survey responses. Up to 50,000 responses may be requested per call; make
+        multiple calls to page through more. Requests above the redirect threshold are redirected to a
+        temporary file on S3, so the calling client MUST follow redirects. The published path template
+        also accepts three further optional trailing segments — `/{filter}/{sort_by}/{end_time}` — where
+        `filter` is one of `answered`, `raw` or `published`, `sort_by` is `sent` or `responded`, and
+        `end_time` is a unix timestamp upper bound. `question_type` in each row indicates whether the
+        response was to an NPS, CSAT or 5STAR survey.
+      x-source: https://demo.asknice.ly/help/apidocs/responses
+      parameters:
+        - name: sortDirection
+          in: path
+          required: true
+          description: Sort direction. Defaults to `asc`.
+          schema: {type: string, enum: [asc, desc], default: asc}
+        - name: pagesize
+          in: path
+          required: true
+          description: Rows per request. Default and maximum are both 50,000.
+          schema: {type: integer, maximum: 50000, default: 50000}
+        - name: pagenumber
+          in: path
+          required: true
+          description: Current page, starting at 1.
+          schema: {type: integer, minimum: 1}
+        - name: sinceTime
+          in: path
+          required: true
+          description: Unix timestamp; return responses at or after this time.
+          schema: {type: integer}
+        - name: format
+          in: path
+          required: true
+          description: Response format.
+          schema: {type: string, enum: [json, csv], default: json}
+        - name: includestatustime
+          in: query
+          required: false
+          description: Set to `yes` to also return the unix-timestamp `case_closed_time` for each response.
+          schema: {type: string, enum: [yes]}
+        - name: 'filters[]'
+          in: query
+          required: false
+          description: >-
+            Custom data field to filter on (repeatable). Must be paired positionally with `values[]`;
+            the number and order of filters and values must match.
+          schema: {type: array, items: {type: string}}
+        - name: 'values[]'
+          in: query
+          required: false
+          description: Value for the correspondingly-positioned `filters[]` entry (repeatable).
+          schema: {type: array, items: {type: string}}
+      responses:
+        '200':
+          description: A page of survey responses.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsesEnvelope'
+              example:
+                success: true
+                total: '10395'
+                totalpages: '2079'
+                pagenumber: '1'
+                pagesize: '5'
+                since_time: '0'
+                end_time: '1642981569'
+                data:
+                  - response_id: '54120'
+                    person_id: '54121'
+                    contact_id: '54121'
+                    name: Aiman Shakeel
+                    email: 3d2c555c.39829842@example.com
+                    answer: '8'
+                    answerlabel: '8'
+                    data: null
+                    comment: ''
+                    note: null
+                    status: ''
+                    dontcontact: null
+                    sent: '1614192119'
+                    opened: '1614192119'
+                    responded: '1614192119'
+                    lastemailed: '1614192119'
+                    created: '1614192119'
+                    segment: null
+                    question_type: nps
+                    published: ''
+                    publishedname: ''
+            text/csv:
+              schema: {type: string}
+        '302':
+          description: >-
+            Redirect to a temporary S3 file holding the result set. Clients must follow redirects.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /getnps/{days}:
+    get:
+      operationId: getNps
+      tags: [Statistics]
+      summary: Get the current NPS score
+      description: >-
+        Returns the account's Net Promoter Score over a rolling window. Optional `filters[]`/`values[]`
+        query pairs restrict the calculation to matching custom data field values.
+      x-source: https://demo.asknice.ly/help/apidocs/getnps
+      parameters:
+        - name: days
+          in: path
+          required: true
+          description: Number of days back from today to calculate NPS over. Default is 30.
+          schema: {type: integer, default: 30}
+        - name: 'filters[]'
+          in: query
+          required: false
+          description: Custom data field to filter on (repeatable, positionally paired with `values[]`).
+          schema: {type: array, items: {type: string}}
+        - name: 'values[]'
+          in: query
+          required: false
+          description: Value for the correspondingly-positioned `filters[]` entry (repeatable).
+          schema: {type: array, items: {type: string}}
+      responses:
+        '200':
+          description: The NPS score for the window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NpsResult'
+              examples:
+                unfiltered:
+                  summary: NPS for the last 30 days
+                  value: {NPS: '64.5'}
+                filtered:
+                  summary: NPS filtered by country and city
+                  value: {NPS: '51.1'}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /sentstats/{days}:
+    get:
+      operationId: getSentStats
+      tags: [Statistics]
+      summary: Get sent-survey statistics
+      description: >-
+        Returns delivery and response statistics for surveys sent in the window. The published path
+        template also accepts two optional trailing segments — `/{field}/{value}` — to filter on a single
+        custom property, or on `question_type` with values `NPS`, `CSAT` or `FIVESTAR`. Multiple
+        properties can be filtered with repeatable `filters[]`/`values[]` query pairs.
+      x-source: https://demo.asknice.ly/help/apidocs/sentstats
+      parameters:
+        - name: days
+          in: path
+          required: true
+          description: Number of days back from today for surveys sent. Default is 30.
+          schema: {type: integer, default: 30}
+        - name: 'filters[]'
+          in: query
+          required: false
+          description: Custom data field to filter on (repeatable, positionally paired with `values[]`).
+          schema: {type: array, items: {type: string}}
+        - name: 'values[]'
+          in: query
+          required: false
+          description: Value for the correspondingly-positioned `filters[]` entry (repeatable).
+          schema: {type: array, items: {type: string}}
+      responses:
+        '200':
+          description: Sent-survey statistics for the window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentStats'
+              example:
+                sent: 6
+                delivered: 6
+                opened: 3
+                responded: 2
+                promoters: 0
+                passives: 0
+                detractors: 2
+                responserate: 33.3%
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /stats:
+    get:
+      operationId: getHistoricalStats
+      tags: [Statistics]
+      summary: Get historical survey statistics
+      description: Returns day-by-day historical sending, delivery, open, response and score statistics.
+      x-source: https://demo.asknice.ly/help/apidocs/stats
+      parameters:
+        - name: year
+          in: query
+          required: false
+          description: Year to get stats for.
+          schema: {type: integer}
+        - name: month
+          in: query
+          required: false
+          description: Month to get stats for.
+          schema: {type: integer, minimum: 1, maximum: 12}
+        - name: day
+          in: query
+          required: false
+          description: Day to get stats for.
+          schema: {type: integer, minimum: 1, maximum: 31}
+        - name: segment
+          in: query
+          required: false
+          description: Restrict stats to this segment only.
+          schema: {type: string}
+        - name: start_time
+          in: query
+          required: false
+          description: Unix timestamp for all responses sent at or after this time.
+          schema: {type: integer}
+        - name: end_time
+          in: query
+          required: false
+          description: Unix timestamp for all responses sent at or before this time.
+          schema: {type: integer}
+        - name: include-delay
+          in: query
+          required: false
+          description: Offset the date by `delayminutes`.
+          schema: {type: string}
+      responses:
+        '200':
+          description: Historical statistics rows.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricalStatsEnvelope'
+              example:
+                success: true
+                data:
+                  - year: '2023'
+                    month: '8'
+                    day: '16'
+                    weekday: Thu
+                    sent: '5'
+                    delivered: '5'
+                    opened: '3'
+                    responded: '2'
+                    promoters: '1'
+                    passives: '1'
+                    detractors: '0'
+                    nps: '50.0'
+                    fivestar: null
+                    csat: null
+                    comment_length: '68'
+                    comment_responded_percent: '100.0'
+                    surveys_responded_percent: '40.0'
+                    surveys_opened_responded_percent: '66.7'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-apikey
+      description: >-
+        The account API key, found in-platform under Settings > API. Every AskNicely user is issued their
+        own key; create a separate user to isolate API traffic. Sending an invalid or missing key returns
+        HTTP 401.
+  parameters:
+    Search:
+      name: search
+      in: path
+      required: true
+      description: URL-encoded value to search for, e.g. a contact's email address.
+      schema: {type: string}
+      example: schrodinger%40example.com
+    SearchKey:
+      name: key
+      in: path
+      required: true
+      description: The field to search by. Defaults to `email`; may be `id` or any custom property set via the API.
+      schema: {type: string, default: email}
+      example: email
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: 'We could not find the api key, or it was not set []'
+    RateLimited:
+      description: >-
+        Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the
+        current window, and `Retry-After` indicates when to retry.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema: {type: integer}
+        RateLimit-Req10s-Limit:
+          description: Requests permitted in the rolling 10-second window.
+          schema: {type: integer}
+        RateLimit-Req10s-Remaining:
+          description: Requests remaining in the rolling 10-second window.
+          schema: {type: integer}
+        RateLimit-Req60s-Limit:
+          description: Requests permitted in the rolling 60-second window.
+          schema: {type: integer}
+        RateLimit-Req60s-Remaining:
+          description: Requests remaining in the rolling 60-second window.
+          schema: {type: integer}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitError'
+          example:
+            success: false
+            msg: 'Rate limit hit: reduce the rate of requests and retry'
+            type: req-10s
+            count: 201
+            limit: 200
+  schemas:
+    SuccessEnvelope:
+      type: object
+      properties:
+        success: {type: boolean}
+        msg: {type: string}
+      required: [success]
+    ErrorEnvelope:
+      type: object
+      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
+      properties:
+        success: {type: boolean, const: false}
+        msg: {type: string, description: Human-readable error message.}
+      required: [success, msg]
+    RateLimitError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorEnvelope'
+        - type: object
+          properties:
+            type: {type: string, description: 'Which window was exceeded, e.g. req-10s or req-60s.'}
+            count: {type: integer, description: Requests made in the window.}
+            limit: {type: integer, description: Requests permitted in the window.}
+    TriggerSurveyRequest:
+      type: object
+      required: [email]
+      description: >-
+        Any additional properties are treated as custom data fields. AskNicely recommends suffixing custom
+        field names with `_c` (snake_case) to avoid collisions with reserved names.
+      properties:
+        email: {type: string, format: email, description: Contact email address.}
+        name: {type: string, description: Full name. Alternatively send firstname and lastname.}
+        firstname: {type: string}
+        lastname: {type: string}
+        addcontact:
+          type: boolean
+          description: >-
+            When true the contact is only added/updated and no survey email is sent (leave sending to the
+            daily scheduler). Set false to also send a survey where the global contact rules allow.
+        delayminutes:
+          type: integer
+          description: Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.
+        triggeremail:
+          type: boolean
+          description: >-
+            When true the API ALWAYS sends a survey, overriding all contact rules. Intended for
+            development testing only — remove entirely in production. Setting it to false does not stop
+            surveys being sent.
+        thendeactivate:
+          type: boolean
+          description: >-
+            Deactivate the contact after the survey is sent so they are not picked up by the daily
+            scheduler. Only works in conjunction with triggeremail=true.
+        segment: {type: string, description: The contact's segment.}
+      additionalProperties: true
+    TriggerSurveyResponse:
+      type: object
+      properties:
+        success: {type: boolean}
+        surveys_sent: {type: integer}
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              survey_sent: {type: boolean}
+              id: {type: string, description: The AskNicely contact id created or updated.}
+              email: {type: string, format: email}
+              msg: {type: string}
+    BulkAddRequest:
+      type: object
+      required: [contacts]
+      properties:
+        contacts:
+          type: array
+          description: The contacts to add or update.
+          items:
+            $ref: '#/components/schemas/BulkContact'
+        obeyrules:
+          type: boolean
+          description: >-
+            Set to true to trigger surveys for eligible contacts under the Global Contact Rules.
+            `false` is not a valid value — omit the property to import only.
+    BulkContact:
+      type: object
+      required: [email]
+      description: >-
+        Additional properties are custom data fields (suffix `_c`), and may carry an array of values for
+        multi-value fields.
+      properties:
+        email: {type: string, format: email}
+        name: {type: string}
+        segment: {type: string}
+      additionalProperties: true
+    PrivacyRemoveRequest:
+      type: object
+      required: [contacts]
+      properties:
+        contacts:
+          type: array
+          description: Email addresses of the contacts to erase.
+          items: {type: string, format: email}
+        skipnotify:
+          type: integer
+          default: 0
+          description: Set to 1 to suppress notifying the primary AskNicely user about the removal.
+    Contact:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        email: {type: string, format: email}
+        segment: {type: string}
+        active: {type: string, description: '"1" when the contact is active.'}
+        created: {type: string, description: Unix timestamp.}
+        scheduled: {type: string}
+        lastemailed: {type: string, description: Unix timestamp.}
+        importedattime: {type: string, description: Unix timestamp.}
+        source: {type: string, description: 'Where the contact came from, e.g. an integration name.'}
+        unsubscribetime: {type: [string, 'null'], description: Unix timestamp of unsubscribe, or null.}
+      additionalProperties: true
+    ContactEnvelope:
+      type: object
+      properties:
+        success: {type: boolean}
+        data: {$ref: '#/components/schemas/Contact'}
+    ContactRemovedEnvelope:
+      type: object
+      properties:
+        success: {type: boolean}
+        msg: {type: string}
+        data: {$ref: '#/components/schemas/Contact'}
+    UnsubscribedContact:
+      type: object
+      properties:
+        id: {type: string, description: The contact id.}
+        email: {type: string, format: email}
+        unsubscribetime: {type: string, description: Unix timestamp.}
+    UnsubscribedEnvelope:
+      type: object
+      properties:
+        success: {type: boolean}
+        data:
+          type: array
+          items: {$ref: '#/components/schemas/UnsubscribedContact'}
+    SurveyResponse:
+      type: object
+      properties:
+        response_id: {type: string}
+        person_id: {type: string, description: Deprecated alias of contact_id.}
+        contact_id: {type: string}
+        name: {type: string}
+        email: {type: string, format: email}
+        answer: {type: string, description: The score given.}
+        answerlabel: {type: string}
+        comment: {type: string}
+        note: {type: [string, 'null']}
+        status: {type: string}
+        dontcontact: {type: [string, 'null']}
+        sent: {type: string, description: Unix timestamp.}
+        opened: {type: string, description: Unix timestamp.}
+        responded: {type: string, description: Unix timestamp.}
+        lastemailed: {type: string, description: Unix timestamp.}
+        created: {type: string, description: Unix timestamp.}
+        segment: {type: [string, 'null']}
+        question_type: {type: string, description: 'nps, csat or fivestar.'}
+        published: {type: string}
+        publishedname: {type: string}
+        case_closed_time: {type: string, description: Returned when includestatustime=yes.}
+      additionalProperties: true
+    ResponsesEnvelope:
+      type: object
+      properties:
+        success: {type: boolean}
+        total: {type: string}
+        totalpages: {type: string}
+        pagenumber: {type: string}
+        pagesize: {type: string}
+        since_time: {type: string}
+        end_time: {type: string}
+        data:
+          type: array
+          items: {$ref: '#/components/schemas/SurveyResponse'}
+    NpsResult:
+      type: object
+      properties:
+        NPS: {type: string, description: The Net Promoter Score for the window.}
+    SentStats:
+      type: object
+      properties:
+        sent: {type: integer}
+        delivered: {type: integer}
+        opened: {type: integer}
+        responded: {type: integer}
+        promoters: {type: integer}
+        passives: {type: integer}
+        detractors: {type: integer}
+        responserate: {type: string}
+    HistoricalStatsRow:
+      type: object
+      properties:
+        year: {type: string}
+        month: {type: string}
+        day: {type: string}
+        weekday: {type: string}
+        sent: {type: string}
+        delivered: {type: string}
+        opened: {type: string}
+        responded: {type: string}
+        promoters: {type: string}
+        passives: {type: string}
+        detractors: {type: string}
+        nps: {type: string}
+        fivestar: {type: [string, 'null']}
+        csat: {type: [string, 'null']}
+        comment_length: {type: string}
+        comment_responded_percent: {type: string}
+        surveys_responded_percent: {type: string}
+        surveys_opened_responded_percent: {type: string}
+    HistoricalStatsEnvelope:
+      type: object
+      properties:
+        success: {type: boolean}
+        data:
+          type: array
+          items: {$ref: '#/components/schemas/HistoricalStatsRow'}

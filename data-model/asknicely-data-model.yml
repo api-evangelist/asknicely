@@ -1,0 +1,107 @@
+generated: '2026-08-06'
+method: derived
+source: openapi/asknicely-openapi.yml
+description: >-
+  The AskNicely entity graph, derived from the schemas and id-reference fields in the OpenAPI. The model
+  is small and flat: a Contact is the root record, a SurveyResponse belongs to a Contact via contact_id,
+  and statistics are aggregates over responses rather than stored entities. Custom data fields hang off
+  the Contact as an open key/value bag rather than a typed schema.
+entities:
+- name: Contact
+  schema: '#/components/schemas/Contact'
+  identifier: id
+  identifier_type: numeric string
+  natural_key: email
+  description: >-
+    A person who can be surveyed. Upserted on email address — writing the same email updates the existing
+    record rather than creating a duplicate.
+  fields_of_note:
+    active: '"1" when active. removeContact sets inactive; re-adding reactivates.'
+    unsubscribetime: Non-null once the contact used the unsubscribe link. Re-adding does NOT re-subscribe.
+    source: Where the contact came from, e.g. an integration name such as `intercom`.
+    segment: Free-text grouping used as a trigger field for contact rules.
+  open_fields:
+    convention: any snake_case field suffixed `_c`
+    detail: Custom data fields are stored on the Contact and echoed on responses; they are not declared anywhere.
+  operations: [getContact, removeContact, triggerSurvey, bulkAddContacts, uploadContactsCsv, privacyRemoveContacts, deactivateAllContacts]
+- name: SurveyResponse
+  schema: '#/components/schemas/SurveyResponse'
+  identifier: response_id
+  description: >-
+    One answer to one survey. Carries the score (`answer`), the free-text `comment`, the sent/opened/
+    responded unix timestamps, the metric type, and a copy of the contact's custom fields at answer time.
+  fields_of_note:
+    question_type: nps | csat | fivestar — which metric the leading question used.
+    person_id: Deprecated alias of contact_id, still returned (deprecated 2021-05-06).
+    case_closed_time: Returned only when includestatustime=yes.
+    status: Case-management status of the response.
+  operations: [getResponses]
+- name: UnsubscribedContact
+  schema: '#/components/schemas/UnsubscribedContact'
+  identifier: id
+  description: >-
+    A projection of Contact restricted to those who unsubscribed. `id` is the same contact id returned by
+    getContact and triggerSurvey.
+  operations: [getUnsubscribedContacts]
+- name: SurveyTemplate
+  identifier: template_name
+  description: >-
+    Named survey configuration (subject line, leading question, look and feel). Referenced by name from
+    the in-app slug request and echoed as `survey_template` on webhook payloads. Managed in-product only
+    — there is no REST operation to list, create or read a template.
+  operations: []
+  surface: UI-only
+- name: CsvImporter
+  identifier: importerId
+  description: >-
+    A saved CSV import configuration created in the CSV Importer App, defining column mapping and whether
+    surveys are sent. The API can only upload a file to an existing importer.
+  operations: [uploadContactsCsv]
+  surface: created in UI, invoked by API
+relationships:
+- from: SurveyResponse
+  to: Contact
+  type: belongs_to
+  via: contact_id
+  evidence: '"id in the JSON response is the contact ID, same as contact_id from Get Responses and the id returned by Send Survey."'
+- from: Contact
+  to: SurveyResponse
+  type: has_many
+  via: contact_id
+- from: SurveyResponse
+  to: Contact
+  type: belongs_to
+  via: person_id
+  deprecated: true
+  note: Legacy alias retained for compatibility; deprecated 2021-05-06.
+- from: UnsubscribedContact
+  to: Contact
+  type: belongs_to
+  via: id
+- from: SurveyResponse
+  to: SurveyTemplate
+  type: belongs_to
+  via: survey_template
+  note: Present on webhook payloads; not returned by the REST /responses example.
+- from: Contact
+  to: CsvImporter
+  type: created_by
+  via: importerId
+  note: Provenance only — the importer determines how uploaded rows become contacts.
+aggregates:
+- name: SentStats
+  over: SurveyResponse
+  window: rolling days
+  operations: [getSentStats]
+- name: HistoricalStats
+  over: SurveyResponse
+  window: calendar year/month/day or unix time range
+  operations: [getHistoricalStats]
+- name: NpsScore
+  over: SurveyResponse
+  window: rolling days
+  operations: [getNps]
+notes:
+- All identifiers are returned as strings, including numeric ids and unix timestamps.
+- All timestamps are unix epoch seconds, as strings.
+- There is no organisation/location/team entity in the public API, though the product has locations and leaderboards.

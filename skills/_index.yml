@@ -1,0 +1,38 @@
+generated: '2026-08-06'
+method: generated
+source: openapi/asknicely-openapi.yml + openapi/asknicely-inapp-openapi.yml + conventions/asknicely-conventions.yml
+description: >-
+  Packaged Agent Skills for the AskNicely API — one per marquee flow. Every step is grounded in an
+  operationId that exists verbatim in the specs in openapi/, and every warning restates something
+  AskNicely states in its own documentation. AskNicely publishes no skills or AGENTS.md of its own.
+skills:
+- file: asknicely-survey-a-customer.md
+  name: Survey an AskNicely customer
+  api: openapi/asknicely-openapi.yml
+  operations: [triggerSurvey, getContact]
+- file: asknicely-survey-customers-in-bulk.md
+  name: Bulk load AskNicely contacts and survey them
+  api: openapi/asknicely-openapi.yml
+  operations: [bulkAddContacts, uploadContactsCsv, getContact]
+- file: asknicely-export-responses-and-scores.md
+  name: Export AskNicely responses and read scores
+  api: openapi/asknicely-openapi.yml
+  operations: [getResponses, getNps, getSentStats, getHistoricalStats]
+- file: asknicely-honor-privacy-requests.md
+  name: Honour an AskNicely privacy or unsubscribe request
+  api: openapi/asknicely-openapi.yml
+  operations: [privacyRemoveContacts, removeContact, getUnsubscribedContacts, getContact, deactivateAllContacts]
+- file: asknicely-embed-in-app-survey.md
+  name: Embed an AskNicely survey in your own app
+  api: openapi/asknicely-inapp-openapi.yml
+  operations: [requestSurveySlug]
+guardrails:
+  no_sandbox: >-
+    AskNicely publishes no sandbox host. Every call runs against the live account and can email real
+    customers. Agents must treat every write as production.
+  human_in_the_loop:
+  - privacyRemoveContacts — irreversible erasure plus blocklisting.
+  - deactivateAllContacts — account-wide; stops all scheduled sends.
+  - triggerSurvey with triggeremail=true — overrides all contact rules and sends on every call.
+  not_safe_to_retry: [triggerSurvey, bulkAddContacts, privacyRemoveContacts]
+  safe_to_retry: [getContact, getResponses, getNps, getSentStats, getHistoricalStats, getUnsubscribedContacts]

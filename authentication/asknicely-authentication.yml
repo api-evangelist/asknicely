@@ -1,0 +1,18 @@
+generated: '2026-08-06'
+method: derived
+source: openapi/asknicely-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-apikey
+  description: The account API key, found in-platform under Settings > API. Every AskNicely
+    user is issued their own key; create a separate user to isolate API traffic. Sending an
+    invalid or missing key returns HTTP 401.
+  sources:
+  - openapi/asknicely-openapi.yml

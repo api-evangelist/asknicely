@@ -1,0 +1,267 @@
+generated: '2026-08-06'
+method: searched
+source: https://demo.asknice.ly/help/apidocs
+description: >-
+  Request and response examples transcribed verbatim from AskNicely's own API reference pages. Every
+  example below also lives inline in openapi/asknicely-openapi.yml so a tooling consumer gets them from
+  the spec. Values are AskNicely's published sample values — no example has been invented, and none is a
+  live credential (the docs render the API key field empty).
+examples:
+- operation: triggerSurvey
+  docs: https://demo.asknice.ly/help/apidocs/survey
+  request:
+    method: POST
+    url: https://DEMO.asknice.ly/api/v1/contact/trigger
+    headers: {X-apikey: <your api key>}
+    form:
+      email: schrodinger@example.com
+      name: Erwin Schrodinger
+      triggeremail: 'true'
+      segment: green
+      city_c: portland
+  responses:
+    sent:
+      result:
+      - {survey_sent: true, id: '15968', email: schrodinger@example.com, msg: Message Sent}
+      success: true
+      surveys_sent: 1
+    suppressed_by_contact_rules:
+      result:
+      - survey_sent: false
+        id: '15968'
+        email: schrodinger@example.com
+        msg: >-
+          You have already contacted this contact within the period of your contact rules, this request
+          will be ignored. Add parameter '&triggeremail=true' to override contract rules and trigger this
+          survey.
+      success: true
+      surveys_sent: 0
+    unsubscribed:
+      result:
+      - survey_sent: false
+        id: '15968'
+        email: schrodinger@example.com
+        msg: This contact has been de-activated or has un-subscribed, your survey will not be sent
+      success: true
+      surveys_sent: 0
+- operation: bulkAddContacts
+  docs: https://demo.asknice.ly/help/apidocs/bulkasync
+  request:
+    method: POST
+    url: https://DEMO.asknice.ly/api/v1/contacts/add
+    headers: {X-apikey: <your api key>, Content-Type: application/json}
+    body:
+      contacts:
+      - {name: Jane Doe, email: jane@example.com, region: West, account_owner: Sarah}
+      - {name: John Smith, email: john@example.com, region: East, account_owner: Tom}
+      obeyrules: true
+  responses:
+    '201': {success: true}
+    '400_no_data': {success: false, msg: no data found}
+    '400_not_array': {success: false, msg: 'if set, contacts must be an array'}
+    '500': {success: false, msg: Internal Server Error}
+- operation: getContact
+  docs: https://demo.asknice.ly/help/apidocs/getcontact
+  request:
+    method: GET
+    url: https://DEMO.asknice.ly/api/v1/contact/get/schrodinger%40example.com/email
+    headers: {X-apikey: <your api key>}
+  response:
+    success: true
+    data:
+      id: '15816'
+      lastemailed: '1452219376'
+      active: '1'
+      created: '1418350105'
+      scheduled: '0'
+      name: John Ballinger
+      email: john@asknice.ly
+      segment: VIP Customer
+      importedattime: '1450653162'
+      source: intercom
+      intercomid: 548a4e19bcdac3592e0019b7
+      unsubscribetime: null
+- operation: removeContact
+  docs: https://demo.asknice.ly/help/apidocs/removecontact
+  request:
+    method: GET
+    url: https://DEMO.asknice.ly/api/v1/contact/remove/schrodinger%40example.com/email
+    headers: {X-apikey: <your api key>}
+  response:
+    success: true
+    msg: removed
+    data: {id: '15816', name: John Ballinger, email: john@asknice.ly, segment: VIP Customer, active: '1'}
+- operation: privacyRemoveContacts
+  docs: https://demo.asknice.ly/help/apidocs/gdprdelete
+  request:
+    method: POST
+    url: https://DEMO.asknice.ly/api/v1/privacy/remove
+    headers: {X-apikey: <your api key>, Content-Type: application/json}
+    body:
+      skipnotify: 1
+      contacts: [john@asknice.ly, john@example.com]
+  response: {success: true, msg: contact removed}
+- operation: getUnsubscribedContacts
+  docs: https://demo.asknice.ly/help/apidocs/getunsubscribed
+  request:
+    method: GET
+    url: 'https://DEMO.asknice.ly/api/v1/contacts/unsubscribed?pagenumber=1&pagesize=1000'
+    headers: {X-apikey: <your api key>}
+  response:
+    success: true
+    data:
+    - {id: '15816', unsubscribetime: '1452219376', email: test@example.com}
+    - {id: '16838', unsubscribetime: '14522193485', email: test2@example.com}
+- operation: getResponses
+  docs: https://demo.asknice.ly/help/apidocs/responses
+  request:
+    method: GET
+    url: https://DEMO.asknice.ly/api/v1/responses/desc/5/1/0/json
+    headers: {X-apikey: <your api key>}
+    note: --location required; large result sets redirect to a temporary S3 file.
+  response:
+    success: true
+    total: '10395'
+    totalpages: '2079'
+    pagenumber: '1'
+    pagesize: '5'
+    since_time: '0'
+    end_time: '1642981569'
+    data:
+    - response_id: '54120'
+      person_id: '54121'
+      contact_id: '54121'
+      name: Aiman Shakeel
+      email: 3d2c555c.39829842@example.com
+      answer: '8'
+      answerlabel: '8'
+      data: null
+      comment: ''
+      note: null
+      status: ''
+      dontcontact: null
+      sent: '1614192119'
+      opened: '1614192119'
+      responded: '1614192119'
+      lastemailed: '1614192119'
+      created: '1614192119'
+      segment: null
+      question_type: nps
+      published: ''
+      publishedname: ''
+- operation: getNps
+  docs: https://demo.asknice.ly/help/apidocs/getnps
+  requests:
+    unfiltered:
+      method: GET
+      url: https://DEMO.asknice.ly/api/v1/getnps/30
+    filtered:
+      method: GET
+      url: 'https://DEMO.asknice.ly/api/v1/getnps/30?filters[]=country_c&filters[]=city_c&values[]=Canada&values[]=Abbotsford'
+  responses:
+    unfiltered: {NPS: '64.5'}
+    filtered: {NPS: '51.1'}
+- operation: getSentStats
+  docs: https://demo.asknice.ly/help/apidocs/sentstats
+  requests:
+    window: {method: GET, url: 'https://DEMO.asknice.ly/api/v1/sentstats/30'}
+    single_filter: {method: GET, url: 'https://DEMO.asknice.ly/api/v1/sentstats/30/custom_field_c/Custom%20Value'}
+    question_type: {method: GET, url: 'https://DEMO.asknice.ly/api/v1/sentstats/30/question_type/csat'}
+  response:
+    sent: 6
+    delivered: 6
+    opened: 3
+    responded: 2
+    promoters: 0
+    passives: 0
+    detractors: 2
+    responserate: 33.3%
+- operation: getHistoricalStats
+  docs: https://demo.asknice.ly/help/apidocs/stats
+  request:
+    method: GET
+    url: 'https://DEMO.asknice.ly/api/v1/stats?year=2023&month=8&day=16'
+  response:
+    success: true
+    data:
+    - year: '2023'
+      month: '8'
+      day: '16'
+      weekday: Thu
+      sent: '5'
+      delivered: '5'
+      opened: '3'
+      responded: '2'
+      promoters: '1'
+      passives: '1'
+      detractors: '0'
+      nps: '50.0'
+      fivestar: null
+      csat: null
+      comment_length: '68'
+      comment_responded_percent: '100.0'
+      surveys_responded_percent: '40.0'
+      surveys_opened_responded_percent: '66.7'
+- operation: deactivateAllContacts
+  docs: https://demo.asknice.ly/help/apidocs/deactivateall
+  request:
+    method: POST
+    url: https://DEMO.asknice.ly/api/v1/contacts/deactivateall
+    note: --location --max-redirs 50 required; returns 307 until complete.
+  response: {success: true, msg: Deactivated 121 contacts}
+- operation: uploadContactsCsv
+  docs: https://demo.asknice.ly/help/apidocs/bulkwithcsvimporter
+  request:
+    method: POST
+    url: https://DEMO.asknice.ly/api/v1/curlupload/1234
+    headers: {X-apikey: <your api key>}
+    multipart: {file: '@TestData.csv'}
+  response_401: {success: false, msg: Could not find user with API key}
+- operation: requestSurveySlug
+  docs: https://demo.asknice.ly/help/apidocs/inapp
+  request:
+    method: POST
+    url: 'https://DEMO.asknice.ly/service/inapp.php?id=2ee42628423611ed'
+    body:
+      domain_key: DEMO
+      template_name: default
+      name: Erwin Schrodinger
+      email: schrodinger@example.com
+      email_hash: df462ce404bbae11bd4e5860682db02e86ccace29b1a4d631dc7fbe075e321c5
+      created: '1418350105'
+      force: true
+      a_custom_property: Sample String
+- surface: webhook
+  docs: https://asknicely.zendesk.com/hc/en-us/articles/47782734299540-Triggering-Webhooks-in-AskNicely
+  payload:
+    count: 1
+    person:
+      id: '163012'
+      name: Firstname Lastname
+      firstname: Firstname
+      lastname: Lastname
+      email: tester@asknice.ly
+      created: '1774990112'
+      segment: general
+    question:
+      id: '345094'
+      score: '10'
+      comment: The gym was great, love it!
+      sent: '1774990116'
+      opened: '1774990122'
+      responded: '1774990125'
+      segment: general
+      deliverymethod: email
+      survey_template: Default
+      ai_question_1: The gym was great, love it!
+      scorecard1: Great Knowledge & Advice
+- surface: error envelope
+  docs: https://demo.asknice.ly/help/apidocs/auth
+  examples:
+    unauthorized: {success: false, msg: 'We could not find the api key, or it was not set []'}
+    rate_limited: {success: false, msg: 'Rate limit hit: reduce the rate of requests and retry', type: req-10s, count: 201, limit: 200}
+  rate_limit_headers:
+    RateLimit-Req10s-Limit: '200'
+    RateLimit-Req10s-Remaining: '197'
+    RateLimit-Req60s-Limit: '1000'
+    RateLimit-Req60s-Remaining: '997'

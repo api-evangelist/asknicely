@@ -1,0 +1,72 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: AskNicely
+providerId: asknicely
+generated: '2026-08-06'
+method: searched
+created: '2026-08-06'
+modified: '2026-08-06'
+tags:
+- Rate Limiting
+- Customer Experience
+- Surveys
+description: >-
+  AskNicely enforces two rolling windows (10 seconds and 60 seconds) per account, reported live on every
+  response through RateLimit-Req10s-* and RateLimit-Req60s-* headers. A separate, lower pair of limits
+  applies to /contact/trigger; AskNicely's own guidance is to use the bulk /contacts/add endpoint instead
+  of hitting that limit. Exceeding a window returns HTTP 429 with a JSON body naming the window, the
+  count and the limit, plus a Retry-After header.
+sources:
+- https://demo.asknice.ly/help/apidocs/auth
+- https://demo.asknice.ly/help/apidocs/changelog
+headers:
+  limit10s: RateLimit-Req10s-Limit
+  remaining10s: RateLimit-Req10s-Remaining
+  limit60s: RateLimit-Req60s-Limit
+  remaining60s: RateLimit-Req60s-Remaining
+  retryAfter: Retry-After
+responseCodes:
+  throttled: 429
+limits:
+- name: General API requests (10-second window)
+  scope: account
+  metric: requests_per_10_seconds
+  limit: 200
+  timeFrame: 10 seconds
+- name: General API requests (60-second window)
+  scope: account
+  metric: requests_per_60_seconds
+  limit: 1000
+  timeFrame: 60 seconds
+- name: Send Survey /contact/trigger (10-second window)
+  scope: account
+  metric: requests_per_10_seconds
+  limit: 100
+  timeFrame: 10 seconds
+  operations: [triggerSurvey]
+- name: Send Survey /contact/trigger (60-second window)
+  scope: account
+  metric: requests_per_60_seconds
+  limit: 500
+  timeFrame: 60 seconds
+  operations: [triggerSurvey]
+payload_limits:
+- name: Bulk add payload
+  limit: 6MB
+  operations: [bulkAddContacts, uploadContactsCsv]
+- name: Get Responses page size
+  limit: 50000
+  unit: responses per request
+  operations: [getResponses]
+throttled_response:
+  status: 429
+  body:
+    success: false
+    msg: 'Rate limit hit: reduce the rate of requests and retry'
+    type: req-10s
+    count: 201
+    limit: 200
+guidance: >-
+  When the /contact/trigger limit is hit, AskNicely recommends batching into /contacts/add rather than
+  retrying. Rate limiting was introduced 9 November 2017 and documented in more detail 21 February 2018.

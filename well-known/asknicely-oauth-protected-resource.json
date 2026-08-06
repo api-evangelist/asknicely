@@ -1,0 +1,12 @@
+{
+    "resource": "https://nicely.asknice.ly/mcp",
+    "authorization_servers": [
+        "https://mcp.asknice.ly"
+    ],
+    "scopes_supported": [
+        "tools"
+    ],
+    "bearer_methods_supported": [
+        "header"
+    ]
+}

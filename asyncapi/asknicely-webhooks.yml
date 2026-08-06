@@ -1,0 +1,90 @@
+generated: '2026-08-06'
+method: searched
+source: https://asknicely.zendesk.com/hc/en-us/articles/47782734299540-Triggering-Webhooks-in-AskNicely
+spec_type: Webhooks
+asyncapi_published: false
+description: >-
+  AskNicely publishes no AsyncAPI document, but it does operate a real outbound webhook surface: a
+  one-way, real-time push of survey response data to a URL configured in the Webhooks app. The webhook is
+  configured entirely in the UI (App Store > Webhooks) — there is no REST endpoint to register,
+  enumerate, rotate or delete a webhook subscription, and no signing secret is documented.
+surface:
+  direction: outbound (AskNicely -> your endpoint)
+  transport: HTTP POST
+  content_type: application/json
+  configuration: In-product, App Store > Webhooks. Enter a callback URL and optional custom headers; clear the URL to disable.
+  registration_api: false
+  subscription_management_api: false
+  event_filtering: false
+  delivery_guarantees: not published
+  retry_policy: not published
+  signature_verification: not published
+  authentication_of_callback: >-
+    Custom HTTP headers configured in the Webhooks app are the only mechanism — the receiver supplies a
+    static token that AskNicely echoes on every request. There is no HMAC payload signature.
+  docs:
+  - https://asknicely.zendesk.com/hc/en-us/articles/47782734299540-Triggering-Webhooks-in-AskNicely
+  - https://asknicely.zendesk.com/hc/en-us/articles/47819959059092--AskNicely-Webhook
+events:
+- name: response.submitted
+  trigger: A contact submits a survey score.
+  note: >-
+    AskNicely does not name its events — there is one webhook that fires for both submission and update.
+    The names here are API Evangelist labels for the two documented trigger conditions; the payload
+    itself carries no event-type field.
+  discriminator: count == 1
+- name: response.updated
+  trigger: A contact changes their score or comment after submitting, or leaves a comment later.
+  discriminator: count > 1
+payload:
+  envelope:
+    count: >-
+      Integer that increments by 1 for each webhook fired for a given response. This is the ONLY way to
+      distinguish an original submission from a subsequent update — there is no event type.
+    person: Contact object — id, name, firstname, lastname, email, created (unix), segment, plus configured custom fields.
+    question: >-
+      Response object — id, score, comment, sent/opened/responded (unix), segment, deliverymethod,
+      survey_template, review_site, theme, life_cycle, AI-generated fields (ai_question_1..n), scorecard
+      fields, and any account custom data fields.
+  example:
+    count: 1
+    person:
+      id: '163012'
+      name: Firstname Lastname
+      firstname: Firstname
+      lastname: Lastname
+      email: tester@asknice.ly
+      created: '1774990112'
+      segment: general
+    question:
+      id: '345094'
+      score: '10'
+      comment: The gym was great, love it!
+      sent: '1774990116'
+      opened: '1774990122'
+      responded: '1774990125'
+      segment: general
+      deliverymethod: email
+      survey_template: Default
+      review_site: null
+      theme: null
+      life_cycle: null
+      ai_question_1: The gym was great, love it!
+      ai_question_2: 'No'
+      ai_question_3: abc
+      scorecard1: Great Knowledge & Advice
+      scorecard2: null
+  source: https://asknicely.zendesk.com/hc/en-us/articles/47782734299540-Triggering-Webhooks-in-AskNicely
+testing:
+  recommended_tool: requestcatcher.com
+  detail: AskNicely recommends generating a temporary catch URL to verify delivery.
+relationship_to_rest:
+  detail: >-
+    The webhook is the push counterpart of the getResponses REST operation. AskNicely is explicit that
+    webhooks cannot be used for historical backfill — use /responses for that.
+gaps:
+- No AsyncAPI (or any machine-readable event) document.
+- No event-type field in the payload; the only submission-vs-update discriminator is an incrementing counter.
+- No webhook registration/management API — configuration is UI-only.
+- No payload signature; authentication of the callback relies on a static custom header.
+- No published retry, ordering or delivery-guarantee semantics.

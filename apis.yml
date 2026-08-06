@@ -1,23 +1,192 @@
 aid: asknicely
 name: AskNicely
-description: 'AskNicely is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  AskNicely is a customer-experience (CX) platform for service businesses, built around Net Promoter
+  Score, CSAT and 5-Star surveys delivered by email, SMS, web badge and in-app. It collects frontline
+  feedback, routes it to managers and staff through leaderboards, coaching and case management, and
+  syndicates positive responses to review sites through its Reputation/Review Manager. Founded in
+  Auckland, New Zealand in 2014, AskNicely serves franchise, home-services, healthcare, fitness and
+  professional-services operators. Its public REST API (`https://{domain}.asknice.ly/api/v1`) covers
+  contact import, survey triggering, response and statistics retrieval, unsubscribe lists and GDPR
+  erasure, authenticated with a single `X-apikey` header, and it ships a per-tenant remote MCP server for
+  its Ask NiceAI assistant.
+image: https://cdn.prod.website-files.com/5e55a51f5f18f823ee05f445/5ec34b022aca806dce613ba4_AN_logo_white.png
 url: https://raw.githubusercontent.com/api-evangelist/asknicely/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-06'
 modified: '2026-08-06'
 tags:
 - Company
-apis: []
+- Customer Experience
+- Net Promoter Score
+- Surveys
+- Feedback
+- Reputation Management
+- SaaS
+- Customer Success
+- Reviews
+- SMS
+x-enrichment:
+  date: '2026-08-06'
+  status: enriched
+  artifacts_added: 30
+  pass: local-v1
+x-coverage:
+  state: covered
+  reason: full-pass
+  detail: >-
+    AskNicely's complete public API reference is served from any tenant host at /help/apidocs (17 pages,
+    including a dated API changelog), and it operates a first-party remote MCP server whose OAuth 2.1
+    metadata is anonymously readable — both were captured. AskNicely publishes no OpenAPI of its own, so
+    the spec in openapi/ was transcribed from those pages; the MCP tools/list is OAuth-gated.
+  evidence:
+  - {url: 'https://demo.asknice.ly/help/apidocs', status: 200}
+  - {url: 'https://mcp.asknice.ly/.well-known/oauth-authorization-server', status: 200}
+  - {url: 'https://nicely.asknice.ly/mcp', status: 401}
+  checked: '2026-08-06'
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- name: AskNicely API
+  description: >-
+    The AskNicely REST API. Import and update contacts, trigger NPS/CSAT/5-Star surveys, bulk-load
+    contacts (JSON or CSV importer), retrieve survey responses in JSON or CSV, read NPS/sent/historical
+    statistics, list unsubscribed contacts, deactivate contacts, and process GDPR erasure requests.
+    Authenticated with an account API key in the `X-apikey` header. Served from each account's own
+    subdomain under /api/v1.
+  humanURL: https://demo.asknice.ly/help/apidocs
+  baseURL: https://demo.asknice.ly/api/v1
+  tags:
+  - Customer Experience
+  - Surveys
+  - Net Promoter Score
+  - Contacts
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs
+  - type: APIReference
+    url: https://demo.asknice.ly/help/apidocs
+  - type: GettingStarted
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: Authentication
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: ChangeLog
+    url: https://demo.asknice.ly/help/apidocs/changelog
+  - type: RateLimits
+    url: rate-limits/asknicely-rate-limits.yml
+  - type: Overlay
+    url: overlays/asknicely-openapi-overlay.yaml
+  - type: Examples
+    url: examples/asknicely-examples.yml
+- name: AskNicely In-App Survey API
+  description: >-
+    Server-to-server endpoint that exchanges an HMAC-SHA256-signed contact identity for a one-time survey
+    slug, so an AskNicely survey can be rendered inside your own website or mobile application rather
+    than delivered by email or SMS.
+  humanURL: https://demo.asknice.ly/help/apidocs/inapp
+  baseURL: https://demo.asknice.ly
+  tags:
+  - Surveys
+  - In-App
+  - Mobile
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-inapp-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs/inapp
+  - type: SourceCode
+    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
+- name: AskNicely MCP Server (Ask NiceAI)
+  description: >-
+    AskNicely's remote Model Context Protocol server, exposing Ask NiceAI's tools — NPS summaries, survey
+    responses, leaderboards and more — to external AI clients such as Claude. Served per tenant at
+    https://{domain}.asknice.ly/mcp, protected by OAuth 2.1 (dynamic client registration, PKCE S256,
+    scope `tools`) with the authorization server at https://mcp.asknice.ly. Requires the Ask NiceAI
+    add-on on the AskNicely account.
+  humanURL: https://asknicely.zendesk.com/hc/en-us/articles/51310930486292-Adding-AskNicely-as-a-Custom-Connector-in-Claude
+  baseURL: https://nicely.asknice.ly/mcp
+  tags:
+  - MCP
+  - AI
+  - Agents
+  properties:
+  - type: MCPServer
+    url: mcp/asknicely-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/asknicely-tool-crosswalk.yml
+  - type: Documentation
+    url: https://asknicely.zendesk.com/hc/en-us/articles/46840078787988-Ask-NiceAI
 common:
+- type: TrustCenter
+  url: security/asknicely-trust-center.yml
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.asknicely.com/
+- type: DeveloperPortal
+  url: https://demo.asknice.ly/help/apidocs
+- type: Documentation
+  url: https://demo.asknice.ly/help/apidocs
+- type: APIReference
+  url: https://demo.asknice.ly/help/apidocs
+- type: GettingStarted
+  url: https://demo.asknice.ly/help/apidocs/auth
+- type: Support
+  url: https://asknicely.zendesk.com/hc/en-us
+- type: Blog
+  url: https://www.asknicely.com/resource-hub
+- type: GitHubOrganization
+  url: https://github.com/asknicely
+- type: Pricing
+  url: https://www.asknicely.com/pricing
+- type: SignUp
+  url: https://start.asknice.ly/findlogin/
+- type: TermsOfService
+  url: https://www.asknicely.com/terms
+- type: PrivacyPolicy
+  url: https://www.asknicely.com/privacy
+- type: Compliance
+  url: https://www.asknicely.com/security
+- type: StatusPage
+  url: https://status.asknicely.com/
+- type: Integrations
+  url: https://www.asknicely.com/integrations
+- type: ChangeLog
+  url: changelog/asknicely-changelog.yml
+- type: Lifecycle
+  url: lifecycle/asknicely-lifecycle.yml
+- type: Deprecation
+  url: https://demo.asknice.ly/help/apidocs/changelog
+- type: Authentication
+  url: authentication/asknicely-authentication.yml
+- type: OAuthScopes
+  url: scopes/asknicely-scopes.yml
+- type: Conventions
+  url: conventions/asknicely-conventions.yml
+- type: ErrorCatalog
+  url: errors/asknicely-problem-types.yml
+- type: RateLimits
+  url: rate-limits/asknicely-rate-limits.yml
+- type: Conformance
+  url: conformance/asknicely-conformance.yml
+- type: WellKnown
+  url: well-known/asknicely-well-known.yml
+- type: DomainSecurity
+  url: security/asknicely-domain-security.yml
+- type: DataModel
+  url: data-model/asknicely-data-model.yml
+- type: Webhooks
+  url: asyncapi/asknicely-webhooks.yml
+- type: Packages
+  url: packages/asknicely-packages.yml
+- type: Components
+  url: components/asknicely-components.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/asknicely-llms.txt

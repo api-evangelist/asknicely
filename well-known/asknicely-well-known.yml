@@ -1,0 +1,73 @@
+generated: '2026-08-06'
+method: probed
+source: live GET of /.well-known/* on every AskNicely host in apis.yml
+description: >-
+  AskNicely publishes no security.txt, no OpenID Connect discovery document and no API catalog. It does
+  publish RFC 8414 OAuth authorization-server metadata and RFC 9728 OAuth protected-resource metadata for
+  its remote MCP server (Ask NiceAI), served from every tenant host as well as from mcp.asknice.ly.
+  Note that api.asknice.ly, mcp.asknice.ly and the tenant hosts answer 403 with an XML CloudFront/S3
+  error body for unknown /.well-known/* paths — that is a CDN error, not a document.
+hosts:
+- host: https://www.asknicely.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+- host: https://demo.asknice.ly
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: asknicely-oauth-authorization-server.json
+    spec: RFC 8414
+  - {path: /.well-known/openid-configuration, status: 302, note: redirects to the tenant login page}
+  - {path: /.well-known/api-catalog, status: 302, note: redirects to the tenant login page}
+  - {path: /.well-known/security.txt, status: 403, note: CloudFront XML error, not a document}
+  - {path: /.well-known/agent-card.json, status: 403, note: CloudFront XML error, not a document}
+  - {path: /.well-known/agent.json, status: 403, note: CloudFront XML error, not a document}
+  - {path: /llms.txt, status: 403}
+- host: https://mcp.asknice.ly
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: asknicely-oauth-authorization-server.json
+    spec: RFC 8414
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: asknicely-oauth-protected-resource.json
+    spec: RFC 9728
+  - {path: /.well-known/agent-card.json, status: 403, note: CloudFront XML error, not a document}
+  - {path: /.well-known/agent.json, status: 403, note: CloudFront XML error, not a document}
+- host: https://nicely.asknice.ly
+  documents:
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: asknicely-oauth-protected-resource.json
+    spec: RFC 9728
+  - {path: /.well-known/agent-card.json, status: 403, note: CloudFront XML error, not a document}
+  - {path: /.well-known/agent.json, status: 403, note: CloudFront XML error, not a document}
+- host: https://api.asknice.ly
+  documents:
+  - {path: /.well-known/security.txt, status: 403}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/agent-card.json, status: 403}
+  - {path: /.well-known/agent.json, status: 403}
+agent_card:
+  found: false
+  note: >-
+    No A2A Agent Card on any host. Every /.well-known/agent-card.json and /.well-known/agent.json probe
+    returned 404 (www.asknicely.com) or a 403 CloudFront XML error body (the asknice.ly hosts). No
+    artifact was written — an agent card is only ever recorded when the provider serves one.
+x-evidence:
+  fetched: '2026-08-06'
+  probes: 33

@@ -1,0 +1,92 @@
+generated: '2026-08-06'
+method: searched
+source: https://demo.asknice.ly/help/apidocs/changelog
+description: >-
+  AskNicely's API lifecycle posture. There is one version (v1) and no version-pinning mechanism, so
+  changes land in place and are communicated only through the dated API changelog page. AskNicely has
+  renamed endpoints and parameters in place (the 2021 person→contact rename) and marks the old forms
+  "deprecated" on the changelog without publishing a sunset date, a Deprecation/Sunset header, or a
+  formal deprecation policy.
+versioning:
+  scheme: uri-path
+  current: v1
+  pinning: false
+  header_versioning: false
+  docs: https://demo.asknice.ly/help/apidocs/changelog
+deprecation:
+  policy_url: https://demo.asknice.ly/help/apidocs/changelog
+  formal_policy: false
+  sunset_header: false
+  deprecation_header: false
+  notice_period: not published
+  detail: >-
+    Deprecations are announced as dated changelog entries. The 6 May 2021 entry deprecated an entire
+    person/people path family in favour of contact/contacts, and the 1 July 2021 entry changed
+    /contacts/add from synchronous to asynchronous — a behavioural breaking change with no version bump.
+    AskNicely gave roughly three months' notice on the /responses redirect/limit enforcement (announced
+    9 July 2021, enforced from October 2021), which is the only observable notice window in the record.
+deprecated_operations:
+- path: /api/v1/person/add
+  replaced_by: /api/v1/contacts/add
+  announced: '2021-05-06'
+- path: /api/v1/person/trigger
+  replaced_by: /api/v1/contact/trigger
+  announced: '2021-05-06'
+- path: /api/v1/people/deactivateall
+  replaced_by: /api/v1/contacts/deactivateall
+  announced: '2021-05-06'
+- path: /api/v1/person/unsubscribed
+  replaced_by: /api/v1/contacts/unsubscribed
+  announced: '2021-05-06'
+- path: /api/v1/person/get
+  replaced_by: /api/v1/contact/get
+  announced: '2021-05-06'
+- path: /api/v1/person/remove
+  replaced_by: /api/v1/contact/remove
+  announced: '2021-05-06'
+deprecated_parameters:
+- parameter: people
+  replaced_by: contacts
+  scope: request body of the bulk add endpoint
+  announced: '2021-05-06'
+- parameter: addperson
+  replaced_by: addcontact
+  scope: /contact/trigger
+  announced: '2021-05-06'
+- parameter: person_id
+  replaced_by: contact_id
+  scope: /sentstats filters
+  announced: '2021-05-06'
+- parameter: person_id
+  replaced_by: contact_id
+  scope: /responses response property (person_id is still returned alongside contact_id)
+  announced: '2021-05-06'
+retired_transports:
+- name: Plain HTTP
+  detail: HTTP access removed in favour of HTTPS-only.
+  announced: '2017-08-10'
+status_page:
+  url: https://status.asknicely.com/
+  provider: Atlassian Statuspage
+  http_status: 200
+  features: [incident history, 90-day uptime, email/Slack/Microsoft Teams subscriptions, Atom feed, RSS feed]
+  feeds:
+    atom: https://status.asknicely.com/history.atom
+    rss: https://status.asknicely.com/history.rss
+sla:
+  url: null
+  uptime_target: null
+  detail: No public SLA or uptime target is published; commitments are contractual.
+support:
+  channel: https://asknicely.zendesk.com/hc/en-us
+  email: support@asknice.ly
+changelog:
+  url: https://demo.asknice.ly/help/apidocs/changelog
+  artifact: changelog/asknicely-changelog.yml
+  first_entry: '2017-08-10'
+  latest_entry: '2024-10-24'
+gaps:
+- No RFC 8594 Sunset or Deprecation response headers.
+- No published deprecation notice period or support window for deprecated paths.
+- No SLA or uptime target published.
+- The API changelog has had no entry since 24 October 2024, while the product changelog is monthly.

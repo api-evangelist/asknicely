@@ -1,0 +1,99 @@
+generated: '2026-08-06'
+method: derived
+source: mcp/asknicely-mcp.yml + openapi/asknicely-openapi.yml
+description: >-
+  Binds AskNicely's MCP capability surface (Ask NiceAI) to the REST operations in
+  openapi/asknicely-openapi.yml. AskNicely's live tools/list is OAuth-gated and it publishes no static
+  tool manifest, so no verified tool NAMES exist to map. Every row below is therefore a CAPABILITY AREA
+  that AskNicely names in its own Ask NiceAI documentation, matched by semantics to the REST operation
+  that serves the same data — confidence is `low` throughout by construction, and no row should be read
+  as a claim about a tool's real name or inputSchema. Resolving this requires an authenticated
+  tools/list against a tenant with the Ask NiceAI add-on.
+surfaces:
+  openapi:
+    file: openapi/asknicely-openapi.yml
+    operations: 12
+    gated: false
+  mcp:
+    url: https://{domain}.asknice.ly/mcp
+    probed: https://nicely.asknice.ly/mcp
+    tools_list_gated: true
+    gate: OAuth 2.1 bearer token (scope `tools`) + Ask NiceAI add-on entitlement
+  graphql:
+    present: false
+crosswalk:
+- tool: NPS summaries
+  category: analytics
+  rest: [getNps]
+  binding: rest
+  confidence: low
+  note: >-
+    Ask NiceAI answers natural-language NPS questions; /getnps/{days} is the REST operation returning the
+    same score, with the same filters[]/values[] custom-field filtering.
+- tool: Survey responses
+  category: feedback
+  rest: [getResponses]
+  binding: rest
+  confidence: low
+  note: >-
+    Ask NiceAI cites the specific customer comments behind an answer; /responses is the REST operation
+    returning those response rows, including comment, score and question_type.
+- tool: Recipient lookup ("who was sent this survey", "who hasn't responded yet")
+  category: feedback
+  rest: [getResponses, getContact]
+  binding: rest
+  confidence: low
+  note: >-
+    Fans out. The `raw` filter on /responses returns surveys sent but not responded to, which is the REST
+    equivalent of the "who hasn't responded" question; /contact/get resolves an individual contact.
+- tool: Leaderboards / frontline performance
+  category: analytics
+  rest: [getSentStats, getHistoricalStats]
+  binding: rest
+  confidence: low
+  note: >-
+    Partial. The REST statistics operations return account- and segment-level aggregates; AskNicely's
+    per-person and per-location leaderboards have no REST equivalent.
+mcp_only:
+- tool: Reports and visualizations (HTML artifacts, saved reports)
+  reason: >-
+    Ask NiceAI generates charts, heatmaps and interactive HTML artifacts and can save/re-run them as
+    Saved Reports. There is no REST operation that produces or stores a report artifact.
+- tool: Help-center / product knowledge search
+  reason: >-
+    Ask NiceAI searches AskNicely's own knowledge base. Not a REST capability; the underlying corpus is
+    the Zendesk help centre, not the customer's account data.
+- tool: Themes / AI insights
+  reason: >-
+    AI Themes, AI Insights and Moderation are AI-layer products with no public REST surface.
+- tool: Case management and workflow configuration questions
+  reason: >-
+    Ask NiceAI can answer on case status, assignees and workflow execution stats. The REST API exposes
+    `status` and `case_closed_time` on a response row but has no case or workflow operations.
+- tool: Related Zendesk ticket lookup
+  reason: Cross-system join into Zendesk performed server-side; no REST operation exposes it.
+rest_only:
+- capability: Contact import and survey triggering
+  operations: [triggerSurvey, bulkAddContacts, uploadContactsCsv]
+  reason: >-
+    Ask NiceAI is documented as read/analysis over account data. No documented MCP capability writes
+    contacts or sends surveys.
+- capability: Contact lifecycle
+  operations: [removeContact, deactivateAllContacts, getUnsubscribedContacts]
+  reason: No documented MCP capability deactivates contacts or reads the unsubscribe list.
+- capability: Privacy / GDPR erasure
+  operations: [privacyRemoveContacts]
+  reason: >-
+    Destructive and irreversible (the contact is blocklisted). No documented MCP capability performs it,
+    and it should not be exposed to an agent without human approval.
+coverage:
+  tools_named: 0
+  capability_areas_documented: 10
+  capability_areas_bound_to_rest: 4
+  mcp_only: 5
+  rest_operations_total: 12
+  rest_operations_with_a_capability_match: 6
+  confidence_ceiling: low
+gaps:
+- Tool names and inputSchemas require an authenticated tools/list against a tenant with the Ask NiceAI add-on.
+- AskNicely publishes no llms.txt and no static MCP tool manifest, so no name-level fallback exists.

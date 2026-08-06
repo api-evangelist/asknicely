@@ -1,0 +1,138 @@
+generated: '2026-08-06'
+method: searched
+source: https://demo.asknice.ly/help/apidocs/changelog
+description: >-
+  AskNicely runs two separate dated change records. The API changelog lives inside the API reference and
+  covers contract-level changes only; its most recent entry is 24 October 2024. The product changelog is
+  a monthly "Product Updates" series in the Zendesk help centre and is current. Both are captured here —
+  an integrator watching only the product updates will miss API contract changes, and vice versa.
+scheme: dated entries (no semantic version)
+current_version: v1
+sources:
+  api_changelog: https://demo.asknice.ly/help/apidocs/changelog
+  product_changelog: https://asknicely.zendesk.com/hc/en-us/search?query=Product%20Updates
+  status_history: https://status.asknicely.com/history.atom
+api_entries:
+- date: '2024-10-24'
+  area: Get Responses
+  type: addition
+  breaking: false
+  highlight: Salesforce integration accounts now receive sfaccount, sfcontactid, sfcaseid and sfleadid fields on responses.
+- date: '2024-09-24'
+  area: Documentation
+  type: documentation
+  breaking: false
+  highlight: Clarified how to use custom data fields with the `_c` suffix; formatting and readability improved.
+- date: '2024-06-21'
+  area: Get Responses
+  type: addition
+  breaking: false
+  highlight: Accounts with Advanced Case Management now receive a case_assigned_user field on responses.
+- date: '2024-03-25'
+  area: Get Responses, Get NPS
+  type: addition
+  breaking: false
+  highlight: Added repeatable filters[] and values[] query filtering to /responses and /getnps.
+- date: '2024-03-04'
+  area: Historical Stats
+  type: fix
+  breaking: false
+  highlight: >-
+    Fixed NPS miscalculation in historical sent stats for accounts mixing metrics in the leading
+    question; promoter/passive/detractor classification corrected; csat and fivestar averages added to
+    the response object.
+- date: '2022-12-03'
+  area: Get Responses
+  type: breaking
+  breaking: true
+  highlight: >-
+    Redirect threshold lowered — clients must follow redirects above 999 responses (was 2,000). Requests
+    above 50,000 responses now return an error. AskNicely warns the threshold may change again.
+- date: '2022-03-11'
+  area: Get Unsubscribed
+  type: addition
+  breaking: false
+  highlight: Added pagenumber/pagesize pagination to the unsubscribe endpoint.
+- date: '2022-01-07'
+  area: Bulk Add with CSV
+  type: addition
+  breaking: false
+  highlight: Documented the CSV Importer upload endpoint (/curlupload/{importer-id}).
+- date: '2021-09-21'
+  area: Get Responses
+  type: breaking
+  breaking: true
+  highlight: Clients must follow redirects above 2,000 responses; requests above 50,000 responses error.
+- date: '2021-07-14'
+  area: Deactivate All
+  type: breaking
+  breaking: true
+  highlight: /contacts/deactivateall now returns HTTP 307 redirects until complete; clients must follow redirects.
+- date: '2021-07-09'
+  area: Get Responses
+  type: notice
+  breaking: false
+  highlight: Advance notice (roughly three months) of the redirect and 50,000-response limits enforced from October 2021.
+- date: '2021-07-01'
+  area: Bulk Add/Send
+  type: breaking
+  breaking: true
+  highlight: >-
+    /contacts/add became asynchronous — it now returns HTTP 201 immediately on valid data and processes
+    afterwards. No contact-specific data is returned by the endpoint any more.
+- date: '2021-05-06'
+  area: All contact endpoints
+  type: breaking
+  breaking: true
+  highlight: >-
+    person/people terminology renamed to contact/contacts across six paths and four parameters. Old paths
+    marked deprecated with no sunset date. See lifecycle/asknicely-lifecycle.yml.
+- date: '2021-03-02'
+  area: Historical Stats
+  type: addition
+  breaking: false
+  highlight: Added the optional include-delay parameter to /api/v1/stats.
+- date: '2018-02-21'
+  area: Rate limits
+  type: documentation
+  breaking: false
+  highlight: Added detail on rate limiting to the documentation.
+- date: '2018-02-20'
+  area: Authentication
+  type: breaking
+  breaking: true
+  highlight: An invalid or missing API key now returns HTTP 401 UNAUTHORIZED instead of HTTP 200 OK.
+- date: '2018-01-09'
+  area: Statistics
+  type: addition
+  breaking: false
+  highlight: >-
+    Added `delivered` and `surveys_delivered_responded_percent` to /stats; added `delivered` to
+    /sentstats and changed responserate to delivered/responded to match the dashboard.
+- date: '2017-11-09'
+  area: Rate limits
+  type: breaking
+  breaking: true
+  highlight: Rate limits introduced. HTTP 429 returned on breach, with limit information in response headers.
+- date: '2017-08-21'
+  area: Sent Statistics
+  type: addition
+  breaking: false
+  highlight: New endpoint GET /api/v1/sentstats.
+- date: '2017-08-10'
+  area: Transport
+  type: breaking
+  breaking: true
+  highlight: Plain HTTP access removed — HTTPS only.
+product_entries_recent:
+- {date: '2026-07', title: July 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/51264638044692-July-2026-Product-Updates'}
+- {date: '2026-06', title: June 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/50129367319572-June-2026-Product-Updates'}
+- {date: '2026-05', title: May 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/49233010143380'}
+- {date: '2026-04', title: April 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/48042652638100-April-2026-Product-Updates'}
+- {date: '2026-03', title: March 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/46932227850004-March-2026-Product-Updates'}
+- {date: '2026-02', title: February 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/46109311161492-February-2026-Product-Updates'}
+- {date: '2026-01', title: January 2026 Product Updates, url: 'https://asknicely.zendesk.com/hc/en-us/articles/45108963121940-January-2026-Product-Updates'}
+gaps:
+- No RSS/Atom feed for the API changelog (the status page has one; the changelog does not).
+- No entries on the API changelog since 24 October 2024, despite ongoing product releases including the MCP server.
+- Breaking changes are announced but not versioned — there is no way to pin to prior behaviour.

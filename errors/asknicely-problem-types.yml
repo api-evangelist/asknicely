@@ -1,0 +1,99 @@
+generated: '2026-08-06'
+method: derived
+source: openapi/asknicely-openapi.yml + https://demo.asknice.ly/help/apidocs
+format: proprietary
+rfc9457: false
+description: >-
+  AskNicely's error catalog. Errors are a flat JSON envelope — `success: false` plus a prose `msg` — with
+  no error code, no type URI and no field pointer, so `msg` string matching is the only discriminator
+  available to a client. The rate-limit error is the one exception and adds `type`, `count` and `limit`.
+  Derived from the documented responses on AskNicely's own API reference pages.
+envelope:
+  success: boolean, false on error
+  msg: human-readable message
+  extensions_on_429: [type, count, limit]
+problems:
+- status: 400
+  title: Contacts data missing
+  message: no data found
+  remediation: Include a JSON body with a top-level `contacts` array.
+  source_operation: openapi/asknicely-openapi.yml#bulkAddContacts
+  source_docs: https://demo.asknice.ly/help/apidocs/bulkasync
+- status: 400
+  title: Malformed JSON
+  message: 'Errors found in json - {error}'
+  variants:
+  - Maximum stack depth exceeded
+  - Underflow or the modes mismatch
+  - Unexpected control character found
+  - Syntax error, malformed JSON
+  - Malformed UTF-8 characters, possibly incorrectly encoded
+  - Unknown error
+  remediation: Validate and UTF-8 encode the JSON payload before sending.
+  source_operation: openapi/asknicely-openapi.yml#bulkAddContacts
+  source_docs: https://demo.asknice.ly/help/apidocs/bulkasync
+- status: 400
+  title: contacts is not an array
+  message: 'if set, contacts must be an array'
+  remediation: The `contacts` property must be a JSON array of contact objects, not an object or string.
+  source_operation: openapi/asknicely-openapi.yml#bulkAddContacts
+  source_docs: https://demo.asknice.ly/help/apidocs/bulkasync
+- status: 401
+  title: API key missing or not found
+  message: 'We could not find the api key, or it was not set []'
+  remediation: >-
+    Send the account API key in the `X-apikey` header. Find it in-platform under Settings > API. Prior to
+    20 February 2018 this condition returned HTTP 200; it now returns 401.
+  applies_to: all operations
+  source_docs: https://demo.asknice.ly/help/apidocs/auth
+- status: 401
+  title: Could not find user with API key
+  message: Could not find user with API key
+  remediation: The key does not resolve to an AskNicely user. Re-issue the key from Settings > API.
+  source_operation: openapi/asknicely-openapi.yml#uploadContactsCsv
+  source_docs: https://demo.asknice.ly/help/apidocs/bulkwithcsvimporter
+- status: 429
+  title: Rate limit hit
+  message: 'Rate limit hit: reduce the rate of requests and retry'
+  extensions:
+    type: which window was exceeded (e.g. req-10s, req-60s)
+    count: requests made in the window
+    limit: requests permitted in the window
+  headers: [Retry-After, RateLimit-Req10s-Limit, RateLimit-Req10s-Remaining, RateLimit-Req60s-Limit, RateLimit-Req60s-Remaining]
+  remediation: >-
+    Back off for the Retry-After interval. On /contact/trigger (100 per 10s, 500 per 60s), AskNicely
+    recommends batching into /contacts/add instead of retrying.
+  applies_to: all operations
+  source_docs: https://demo.asknice.ly/help/apidocs/auth
+- status: 500
+  title: Internal server error
+  message: Internal Server Error
+  remediation: Retry with backoff. Also returned when a bulk payload exceeds the 6MB limit.
+  source_operation: openapi/asknicely-openapi.yml#bulkAddContacts
+  source_docs: https://demo.asknice.ly/help/apidocs/bulkasync
+non_error_conditions:
+- status: 200
+  title: Survey suppressed by contact rules
+  message: >-
+    You have already contacted this contact within the period of your contact rules, this request will be
+    ignored. Add parameter '&triggeremail=true' to override contract rules and trigger this survey.
+  note: >-
+    Returned with success: true and survey_sent: false. A client that only checks the HTTP status or the
+    `success` flag will believe a survey was sent when it was not — check `survey_sent`.
+  source_operation: openapi/asknicely-openapi.yml#triggerSurvey
+- status: 200
+  title: Contact deactivated or unsubscribed
+  message: This contact has been de-activated or has un-subscribed, your survey will not be sent
+  note: 'Also returned with success: true and survey_sent: false.'
+  source_operation: openapi/asknicely-openapi.yml#triggerSurvey
+- status: 307
+  title: Deactivation still in progress
+  note: >-
+    /contacts/deactivateall returns 307 until the job completes. Not an error — the client must follow
+    redirects.
+  source_operation: openapi/asknicely-openapi.yml#deactivateAllContacts
+gaps:
+- No machine-readable error code or type URI on any error.
+- Not RFC 9457 application/problem+json.
+- Two failure conditions on triggerSurvey are returned as HTTP 200 with success: true.
+- No documented error reference page beyond the per-endpoint response tables.

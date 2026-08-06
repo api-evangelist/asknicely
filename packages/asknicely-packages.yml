@@ -1,0 +1,77 @@
+generated: '2026-08-06'
+method: searched
+source: npm, PyPI, RubyGems, Packagist registry searches + https://github.com/asknicely
+description: >-
+  AskNicely publishes NO first-party client SDK in any public package registry. Searches of npm, PyPI,
+  RubyGems and Packagist return only third-party and community packages, and the AskNicely GitHub
+  organisation's 20 public repositories are internal PHP tooling, forks and hiring tests — the one
+  AskNicely-authored, integration-relevant repo is a set of mobile in-app survey code SAMPLES, not a
+  published package. Integrators call the REST API directly with curl or a generic HTTP client, which is
+  the pattern every AskNicely documentation example uses.
+first_party_sdks: none
+packages: []
+first_party_code:
+- name: asknicely-mobile-inapp-samples
+  kind: code samples
+  official: true
+  languages: [java, kotlin, swift/objective-c]
+  url: https://github.com/asknicely/asknicely-mobile-inapp-samples
+  description: >-
+    AskNicely-authored Android and iOS code samples demonstrating how to display an in-app survey. Not a
+    distributed package — there is no Maven, CocoaPods, SPM or npm artifact.
+  relates_to: openapi/asknicely-inapp-openapi.yml
+third_party_packages:
+- language: javascript
+  registry: npm
+  name: gatsby-source-asknicely
+  url: https://www.npmjs.com/package/gatsby-source-asknicely
+  official: false
+  description: Community Gatsby source plugin that loads AskNicely testimonials/responses into a Gatsby site.
+- language: javascript
+  registry: npm
+  name: '@pipedream/asknicely'
+  url: https://www.npmjs.com/package/@pipedream/asknicely
+  official: false
+  description: Pipedream's AskNicely integration components. Published by Pipedream, not AskNicely.
+- language: php
+  registry: packagist
+  name: sminnee/silverstripe-asknicely
+  url: https://packagist.org/packages/sminnee/silverstripe-asknicely
+  official: false
+  description: Community SilverStripe module that embeds an AskNicely NPS web survey.
+- language: php
+  registry: packagist
+  name: asknicely/asknicely-wp-testimonials
+  url: https://packagist.org/packages/asknicely/asknicely-wp-testimonials
+  official: false
+  description: >-
+    WordPress testimonials plugin published under an `asknicely` Packagist vendor namespace, but the
+    source repository is bitbucket.org/crafttheweb (an agency) and the maintainer is an individual, so
+    first-party authorship is NOT established. 42 total downloads. Treat as third-party.
+- language: python
+  registry: github
+  name: luma-institute/python-asknicely
+  url: https://github.com/luma-institute/python-asknicely
+  official: false
+  description: Community Python wrapper. Not published to PyPI.
+- language: ruby
+  registry: github
+  name: advocately/asknicely-ruby
+  url: https://github.com/advocately/asknicely-ruby
+  official: false
+  description: Community Ruby client. Not published to RubyGems.
+- language: r
+  registry: github
+  name: pengelbrecht/datasource.asknicely
+  url: https://github.com/pengelbrecht/datasource.asknicely
+  official: false
+  description: Community R package for pulling AskNicely data. Not on CRAN.
+registries_searched:
+- {registry: npm, query: asknicely, first_party_hits: 0}
+- {registry: pypi, query: asknicely, first_party_hits: 0, note: 'https://pypi.org/pypi/asknicely/json returns 404'}
+- {registry: rubygems, query: asknicely, first_party_hits: 0, note: zero results}
+- {registry: packagist, query: asknicely, first_party_hits: 0}
+- {registry: github, query: 'org:asknicely', first_party_hits: 0, note: '20 public repos, none a client SDK'}
+gaps:
+- No official SDK in any language, so no `SDKs` pointer is wired — the ergonomics sdk_count check is genuinely unmet.
+- The mobile in-app samples are not distributed through any package manager.

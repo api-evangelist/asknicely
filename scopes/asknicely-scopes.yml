@@ -1,0 +1,41 @@
+generated: '2026-08-06'
+method: probed
+source: https://mcp.asknice.ly/.well-known/oauth-authorization-server
+description: >-
+  AskNicely's REST API is API-key authenticated and has no OAuth surface. The only OAuth surface AskNicely
+  operates is the authorization server fronting its remote MCP server (Ask NiceAI), which advertises a
+  single coarse scope. There is no published scopes/permissions reference page — the scope set below is
+  read verbatim from the RFC 8414 authorization-server metadata document.
+applies_to: AskNicely MCP Server (Ask NiceAI)
+schemes:
+- name: MCP OAuth 2.1
+  source: https://mcp.asknice.ly/.well-known/oauth-authorization-server
+  issuer: https://mcp.asknice.ly
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://mcp.asknice.ly/authorize
+    tokenUrl: https://mcp.asknice.ly/token
+    pkce: [S256]
+    refresh: true
+  dynamic_client_registration: https://mcp.asknice.ly/register
+  revocation: https://mcp.asknice.ly/revoke
+scopes:
+- scope: tools
+  description: >-
+    Access the Ask NiceAI MCP tool surface. AskNicely advertises exactly one scope; there is no
+    read/write or per-resource scope decomposition, so consent is all-or-nothing over the tool set.
+  flows: [authorizationCode]
+  sources: ['https://mcp.asknice.ly/.well-known/oauth-authorization-server']
+protected_resources:
+- resource: https://nicely.asknice.ly/mcp
+  authorization_servers: [https://mcp.asknice.ly]
+  scopes_supported: [tools]
+  bearer_methods_supported: [header]
+  source: https://mcp.asknice.ly/.well-known/oauth-protected-resource
+gaps:
+- No scopes or permissions reference page in AskNicely's documentation.
+- A single `tools` scope means no least-privilege decomposition for agent consent.
+- The REST API has no OAuth option at all; it is a single account-wide API key with no scoping.
+x-evidence:
+- {url: 'https://mcp.asknice.ly/.well-known/oauth-authorization-server', http_status: 200, fetched: '2026-08-06'}
+- {url: 'https://mcp.asknice.ly/.well-known/oauth-protected-resource', http_status: 200, fetched: '2026-08-06'}

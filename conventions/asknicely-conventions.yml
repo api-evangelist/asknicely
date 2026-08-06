@@ -1,0 +1,162 @@
+generated: '2026-08-06'
+method: searched
+source: >-
+  https://demo.asknice.ly/help/apidocs — the cross-cutting request/response semantics that apply across
+  the AskNicely REST API, transcribed from AskNicely's own API reference pages and cross-derived from
+  openapi/asknicely-openapi.yml.
+description: >-
+  How the AskNicely API behaves across every operation: authentication, the custom-data field naming
+  convention, pagination, redirect handling, the error envelope, rate-limit signalling, and the absence
+  of idempotency keys and API versioning headers.
+
+base_url: https://{domain}.asknice.ly/api/v1
+api_style: >-
+  REST over HTTPS. Requests are form-encoded (or JSON for the bulk and privacy endpoints); responses are
+  JSON, with an optional CSV format on /responses. HTTP was removed in favour of HTTPS-only in 2017.
+
+authentication:
+  scheme: API key in a request header
+  header: X-apikey
+  key_scope: >-
+    One key per AskNicely user, account-wide in effect. To isolate API traffic, create a separate user
+    and use that user's key. Keys are found in-platform under Settings > API.
+  query_parameter_fallback: >-
+    AskNicely's own help centre shows X-apikey passed as a query-string parameter on /contact/trigger.
+    Prefer the header form — a key in a URL leaks into logs, proxies and referrers.
+  invalid_key_behavior: HTTP 401 UNAUTHORIZED (changed from HTTP 200 on 20 February 2018).
+  docs: https://demo.asknice.ly/help/apidocs/auth
+  detail: authentication/asknicely-authentication.yml
+
+idempotency:
+  supported: false
+  mechanism: null
+  detail: >-
+    AskNicely publishes no idempotency key, no request-deduplication header and no replay semantics.
+    Contact writes are upserts keyed on email address — re-sending the same contact updates the existing
+    record rather than creating a duplicate — but that is entity-level upsert behaviour, not idempotency:
+    a repeated /contact/trigger call can send a second survey. The one deduplication affordance in the
+    API is the single-use 16-character `id` UUID on the in-app survey slug endpoint, which AskNicely
+    documents as "to prevent duplicate spam".
+  retry_guidance: >-
+    Safe to retry: all GET operations. NOT safe to blind-retry: triggerSurvey (may re-send a survey,
+    especially with triggeremail=true, which overrides all contact rules) and privacyRemoveContacts
+    (irreversible — the contact is blocklisted). bulkAddContacts returns 201 immediately and processes
+    asynchronously, so a retry after a timeout can double-process a batch.
+
+pagination:
+  style: page-number
+  surfaces:
+  - operation: getResponses
+    request_params:
+      pagesize: path segment; default and maximum are both 50,000
+      pagenumber: path segment; first page is 1
+      since_time: path segment; unix timestamp lower bound
+      end_time: optional path segment; unix timestamp upper bound
+      sort_direction: path segment; asc (default) or desc
+      sort_by: optional path segment; sent or responded
+    response_fields: [total, totalpages, pagenumber, pagesize, since_time, end_time]
+  - operation: getUnsubscribedContacts
+    request_params:
+      pagenumber: query parameter, must be > 0; required if paginating
+      pagesize: query parameter, must be > 0; defaults to 1000
+    response_fields: []
+    note: No total or page-count fields are returned on this endpoint.
+  docs: https://demo.asknice.ly/help/apidocs/responses
+
+filtering:
+  style: positional parallel arrays
+  params: ['filters[]', 'values[]']
+  applies_to: [getResponses, getNps, getSentStats]
+  rule: >-
+    The number of filters[] and values[] entries must match and they are paired BY POSITION — the first
+    filter binds to the first value, and so on. A mismatch silently returns no data rather than an error.
+    This is a real footgun for agents constructing calls programmatically.
+  single_filter_form: /sentstats/{days}/{field}/{value} accepts one field/value pair as path segments.
+
+custom_data_fields:
+  convention: snake_case name suffixed with `_c`
+  example: branch_location_c=Portland
+  detail: >-
+    Any unrecognised parameter on a contact write is stored as a custom data field on the contact.
+    AskNicely recommends the `_c` suffix to avoid collisions with reserved field names. Bulk contacts may
+    carry an array of values for a multi-value field; /contact/trigger cannot — use /contacts/add.
+  docs: https://demo.asknice.ly/help/apidocs/auth
+
+redirects:
+  required: true
+  detail: >-
+    Two operations depend on HTTP redirects and will fail against a client that does not follow them.
+    /responses redirects large result sets to a temporary file on S3 (the threshold moved from 2,000 to
+    999 responses between September 2021 and December 2022, and AskNicely warns it may change again).
+    /contacts/deactivateall returns HTTP 307 repeatedly until the job finishes.
+  docs: https://demo.asknice.ly/help/apidocs/deactivateall
+
+asynchronous_operations:
+  operations: [bulkAddContacts]
+  detail: >-
+    /contacts/add became asynchronous on 1 July 2021. It validates the payload and returns HTTP 201
+    immediately; contacts are processed afterwards. No per-contact result is returned and there is no
+    job id, status endpoint or completion callback — outcomes must be verified by polling /contact/get.
+
+error_envelope:
+  format: proprietary JSON
+  rfc9457: false
+  shape:
+    success: boolean — false on error
+    msg: human-readable message string
+  detail: >-
+    Errors are not RFC 9457 Problem Details and carry no machine-readable error code, type URI or field
+    pointer. `msg` is prose and is the only discriminator, which makes programmatic error handling
+    brittle. The 429 body adds `type`, `count` and `limit`.
+  catalog: errors/asknicely-problem-types.yml
+
+rate_limits:
+  windows: [10 seconds, 60 seconds]
+  general: 200 per 10s / 1000 per 60s
+  trigger_endpoint: 100 per 10s / 500 per 60s on /contact/trigger
+  headers: [RateLimit-Req10s-Limit, RateLimit-Req10s-Remaining, RateLimit-Req60s-Limit, RateLimit-Req60s-Remaining, Retry-After]
+  status: 429
+  detail: rate-limits/asknicely-rate-limits.yml
+
+versioning:
+  scheme: uri-path
+  current: v1
+  header_versioning: false
+  date_versioning: false
+  detail: >-
+    /api/v1 has been the only version since the API was published. AskNicely has no version header, no
+    version pinning and no parallel-version story; breaking changes are announced on the API changelog
+    page instead.
+  changelog: https://demo.asknice.ly/help/apidocs/changelog
+  lifecycle: lifecycle/asknicely-lifecycle.yml
+
+request_tracing:
+  request_id_header: null
+  detail: >-
+    AskNicely publishes no request-id or correlation-id response header. Responses served through
+    CloudFront carry x-amz-cf-id and apigw-requestid, but these are infrastructure identifiers, not a
+    documented support-traceable request id.
+
+testing_affordances:
+  separate_sandbox_environment: false
+  detail: >-
+    AskNicely publishes no sandbox or test-mode host — the API is exercised against the live account.
+    Two documented parameters exist for development: `triggeremail=true` on /contact/trigger forces a
+    survey to send by overriding ALL contact rules (AskNicely says to remove it entirely in production),
+    and `force=true` on the in-app slug endpoint ignores contact rules and suppresses workflow triggers.
+    Both act on real contacts. AskNicely also hosts a live email-hash verification widget on the in-app
+    docs page, and recommends requestcatcher.com for testing webhook delivery.
+  docs:
+  - https://demo.asknice.ly/help/apidocs/survey
+  - https://demo.asknice.ly/help/apidocs/inapp
+
+webhooks:
+  supported: true
+  detail: asyncapi/asknicely-webhooks.yml
+
+cross_links:
+  authentication: authentication/asknicely-authentication.yml
+  errors: errors/asknicely-problem-types.yml
+  lifecycle: lifecycle/asknicely-lifecycle.yml
+  rate_limits: rate-limits/asknicely-rate-limits.yml
+  data_model: data-model/asknicely-data-model.yml

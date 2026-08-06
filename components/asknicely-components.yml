@@ -1,0 +1,50 @@
+generated: '2026-08-06'
+method: searched
+source: https://asknicely.zendesk.com/hc/en-us/articles/4406127169812--Web-Badge-Setup-Instructions
+description: >-
+  AskNicely's client-side embeddable surface. These are the things you drop into your own web page or
+  mobile app rather than call server-side — distinct from SDKs, of which AskNicely publishes none.
+components:
+- family: Web Badge (NPS JS Widget)
+  kind: embeddable script + data-attribute element
+  loader: https://static.asknice.ly/dist/standalone/nps.js
+  mount: <div id="an_nps" class="an_nps" ...></div>
+  description: >-
+    Publicly displays the account's live NPS, CSAT or 5-Star score on any page where HTML can be embedded.
+    Reads its configuration entirely from data-attributes; renders a bare number that the host page styles
+    with CSS (.an_nps).
+  configuration:
+    data-company: Your AskNicely tenant subdomain (e.g. acmeco for acmeco.asknice.ly).
+    data-question-type: nps | csat | fivestar
+    data-time-unit: day | month
+    data-time-value: integer lookback count
+    data-filters: 'JSON array of custom-field filters, e.g. [{"column":"country_c","operator":"in","value":["Canada"]}]'
+  activation: Requires AskNicely Support to enable the NPS JS Widget on the account first.
+  auth: none — the badge is public by design and takes no key.
+  docs: https://asknicely.zendesk.com/hc/en-us/articles/4406127169812--Web-Badge-Setup-Instructions
+- family: In-app survey (web + mobile)
+  kind: hosted survey surface negotiated server-side
+  description: >-
+    Render an AskNicely survey inside your own website or mobile application. Your server negotiates a
+    one-time survey slug with an HMAC-SHA256 email hash, then the slug is used to display the survey.
+  api: openapi/asknicely-inapp-openapi.yml
+  samples: https://github.com/asknicely/asknicely-mobile-inapp-samples
+  platforms: [web, android, ios]
+  docs: https://demo.asknice.ly/help/apidocs/inapp
+- family: Email-to-survey / embedded first question
+  kind: embeddable survey question in an email template
+  description: >-
+    The leading survey question is rendered inside an email so the recipient answers in place. Configured
+    from survey templates rather than by code.
+  docs: https://asknicely.zendesk.com/hc/en-us/articles/4401971879316-Email-to-Survey
+- family: Ask NiceAI shared report artifacts
+  kind: hosted public share link
+  description: >-
+    AI-generated visualisations and Saved Report runs can be published to a public URL that recipients
+    view and interact with without logging in. Links expire one year after creation and carry AskNicely
+    branding. Admins control which roles may share externally.
+  auth: none for the viewer; the link is the capability.
+  docs: https://asknicely.zendesk.com/hc/en-us/articles/46840078787988-Ask-NiceAI
+notes:
+- The web badge exposes the account's score publicly with no authentication — that is the intended design, but it means the tenant subdomain and its live CX score are readable by anyone who can see the embed.
+- No published npm/CDN package versioning for nps.js; the loader is an unversioned URL on static.asknice.ly.
