@@ -52,65 +52,14 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 apis:
-- name: AskNicely API
-  description: >-
-    The AskNicely REST API. Import and update contacts, trigger NPS/CSAT/5-Star surveys, bulk-load
-    contacts (JSON or CSV importer), retrieve survey responses in JSON or CSV, read NPS/sent/historical
-    statistics, list unsubscribed contacts, deactivate contacts, and process GDPR erasure requests.
-    Authenticated with an account API key in the `X-apikey` header. Served from each account's own
-    subdomain under /api/v1.
-  humanURL: https://demo.asknice.ly/help/apidocs
-  baseURL: https://demo.asknice.ly/api/v1
-  tags:
-  - Customer Experience
-  - Surveys
-  - Net Promoter Score
-  - Contacts
-  properties:
-  - type: OpenAPI
-    url: openapi/asknicely-openapi.yml
-  - type: Documentation
-    url: https://demo.asknice.ly/help/apidocs
-  - type: APIReference
-    url: https://demo.asknice.ly/help/apidocs
-  - type: GettingStarted
-    url: https://demo.asknice.ly/help/apidocs/auth
-  - type: Authentication
-    url: https://demo.asknice.ly/help/apidocs/auth
-  - type: ChangeLog
-    url: https://demo.asknice.ly/help/apidocs/changelog
-  - type: RateLimits
-    url: rate-limits/asknicely-rate-limits.yml
-  - type: Overlay
-    url: overlays/asknicely-openapi-overlay.yaml
-  - type: Examples
-    url: examples/asknicely-examples.yml
-- name: AskNicely In-App Survey API
-  description: >-
-    Server-to-server endpoint that exchanges an HMAC-SHA256-signed contact identity for a one-time survey
-    slug, so an AskNicely survey can be rendered inside your own website or mobile application rather
-    than delivered by email or SMS.
-  humanURL: https://demo.asknice.ly/help/apidocs/inapp
-  baseURL: https://demo.asknice.ly
-  tags:
-  - Surveys
-  - In-App
-  - Mobile
-  properties:
-  - type: OpenAPI
-    url: openapi/asknicely-inapp-openapi.yml
-  - type: Documentation
-    url: https://demo.asknice.ly/help/apidocs/inapp
-  - type: SourceCode
-    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
 - name: AskNicely MCP Server (Ask NiceAI)
   description: >-
     AskNicely's remote Model Context Protocol server, exposing Ask NiceAI's tools — NPS summaries, survey
-    responses, leaderboards and more — to external AI clients such as Claude. Served per tenant at
-    https://{domain}.asknice.ly/mcp, protected by OAuth 2.1 (dynamic client registration, PKCE S256,
-    scope `tools`) with the authorization server at https://mcp.asknice.ly. Requires the Ask NiceAI
-    add-on on the AskNicely account.
-  humanURL: https://asknicely.zendesk.com/hc/en-us/articles/51310930486292-Adding-AskNicely-as-a-Custom-Connector-in-Claude
+    responses, leaderboards and more — to external AI clients such as Claude. Served per tenant at https://{domain}.asknice.ly/mcp,
+    protected by OAuth 2.1 (dynamic client registration, PKCE S256, scope `tools`) with the authorization
+    server at https://mcp.asknice.ly. Requires the Ask NiceAI add-on on the AskNicely account.
+  humanURL: >-
+    https://asknicely.zendesk.com/hc/en-us/articles/51310930486292-Adding-AskNicely-as-a-Custom-Connector-in-Claude
   baseURL: https://nicely.asknice.ly/mcp
   tags:
   - MCP
@@ -123,7 +72,149 @@ apis:
     url: mcp/asknicely-tool-crosswalk.yml
   - type: Documentation
     url: https://asknicely.zendesk.com/hc/en-us/articles/46840078787988-Ask-NiceAI
+- aid: asknicely:asknicely-contacts-api
+  name: AskNicely Contacts API
+  description: Import, look up, deactivate and privacy-delete contacts.
+  humanURL: https://demo.asknice.ly/help/apidocs
+  baseURL: https://demo.asknice.ly/api/v1
+  tags:
+  - Contacts
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-contacts-api-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs
+  - type: APIReference
+    url: https://demo.asknice.ly/help/apidocs
+  - type: GettingStarted
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: Authentication
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: ChangeLog
+    url: https://demo.asknice.ly/help/apidocs/changelog
+  - type: RateLimits
+    url: rate-limits/asknicely-rate-limits.yml
+  - type: Examples
+    url: examples/asknicely-examples.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs/inapp
+  - type: SourceCode
+    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
+- aid: asknicely:asknicely-in-app-surveys-api
+  name: AskNicely In-App Surveys API
+  description: Server-to-server negotiation of an in-app survey slug.
+  humanURL: https://demo.asknice.ly/help/apidocs
+  baseURL: https://demo.asknice.ly/api/v1
+  tags:
+  - In-App Surveys
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-in-app-surveys-api-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs
+  - type: APIReference
+    url: https://demo.asknice.ly/help/apidocs
+  - type: GettingStarted
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: Authentication
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: ChangeLog
+    url: https://demo.asknice.ly/help/apidocs/changelog
+  - type: RateLimits
+    url: rate-limits/asknicely-rate-limits.yml
+  - type: Examples
+    url: examples/asknicely-examples.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs/inapp
+  - type: SourceCode
+    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
+- aid: asknicely:asknicely-responses-api
+  name: AskNicely Responses API
+  description: Retrieve survey responses.
+  humanURL: https://demo.asknice.ly/help/apidocs
+  baseURL: https://demo.asknice.ly/api/v1
+  tags:
+  - Responses
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-responses-api-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs
+  - type: APIReference
+    url: https://demo.asknice.ly/help/apidocs
+  - type: GettingStarted
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: Authentication
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: ChangeLog
+    url: https://demo.asknice.ly/help/apidocs/changelog
+  - type: RateLimits
+    url: rate-limits/asknicely-rate-limits.yml
+  - type: Examples
+    url: examples/asknicely-examples.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs/inapp
+  - type: SourceCode
+    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
+- aid: asknicely:asknicely-statistics-api
+  name: AskNicely Statistics API
+  description: NPS, sent and historical survey statistics.
+  humanURL: https://demo.asknice.ly/help/apidocs
+  baseURL: https://demo.asknice.ly/api/v1
+  tags:
+  - Statistics
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-statistics-api-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs
+  - type: APIReference
+    url: https://demo.asknice.ly/help/apidocs
+  - type: GettingStarted
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: Authentication
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: ChangeLog
+    url: https://demo.asknice.ly/help/apidocs/changelog
+  - type: RateLimits
+    url: rate-limits/asknicely-rate-limits.yml
+  - type: Examples
+    url: examples/asknicely-examples.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs/inapp
+  - type: SourceCode
+    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
+- aid: asknicely:asknicely-surveys-api
+  name: AskNicely Surveys API
+  description: Trigger NPS/CSAT/5-Star surveys to contacts.
+  humanURL: https://demo.asknice.ly/help/apidocs
+  baseURL: https://demo.asknice.ly/api/v1
+  tags:
+  - Surveys
+  properties:
+  - type: OpenAPI
+    url: openapi/asknicely-surveys-api-openapi.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs
+  - type: APIReference
+    url: https://demo.asknice.ly/help/apidocs
+  - type: GettingStarted
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: Authentication
+    url: https://demo.asknice.ly/help/apidocs/auth
+  - type: ChangeLog
+    url: https://demo.asknice.ly/help/apidocs/changelog
+  - type: RateLimits
+    url: rate-limits/asknicely-rate-limits.yml
+  - type: Examples
+    url: examples/asknicely-examples.yml
+  - type: Documentation
+    url: https://demo.asknice.ly/help/apidocs/inapp
+  - type: SourceCode
+    url: https://github.com/asknicely/asknicely-mobile-inapp-samples
 common:
+- type: Overlay
+  url: overlays/asknicely-openapi-overlay.yaml
 - type: TrustCenter
   url: security/asknicely-trust-center.yml
 - type: Website
