@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "AskNicely In-App Survey In-App Surveys API",
+    "version": "v1"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "In-App Surveys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Request an in-app survey slug",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/service/inapp.php",
+            "params": [
+              {
+                "name": "id",
+                "value": "2ee42628423611ed",
+                "type": "query",
+                "description": "A single-use, dash-free, 16-character UUID that prevents duplicate submissions."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Exchanges a signed contact identity for a survey slug. Survey slugs identify who is receiving the survey and record their responses. The `email_hash` is an HMAC-SHA256 of the contact's email address keyed with your account secret key (available in-platform); AskNicely publishes PHP, Ruby, Python, Java and C# examples for producing it, plus a hash verification tool on the docs page."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

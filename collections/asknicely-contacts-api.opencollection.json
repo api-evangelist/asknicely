@@ -1,0 +1,186 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "AskNicely Contacts API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-apikey",
+      "value": "{{X-apikey}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Contacts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Import a contact and trigger a survey",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/contact/trigger",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            }
+          },
+          "docs": "Adds or updates a single contact and, subject to the first Global Contact Rule configured on the Send page, sends them a survey. Contacts whose address is on the Blocklist are not imported. Multi-value custom fields are not supported here — use the bulk endpoint. A separate, lower rate limit applies to this operation (100 req/10s, 500 req/60s)."
+        },
+        {
+          "info": {
+            "name": "Bulk add or update contacts, optionally triggering surveys",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/contacts/add",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Asynchronous bulk import. Accepts a JSON body with a top-level `contacts` array; each contact requires `email` and may carry `name`, `segment` and any number of custom data fields (suffix `_c`), including multi-value arrays. Setting `\"obeyrules\": true` triggers surveys for eligible contacts under the Global Contact Rules. Payload limit is 6MB. Valid payloads return HTTP 201 immediately and are processed asynchronously — no per-contact result is returned."
+        },
+        {
+          "info": {
+            "name": "Get a contact",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/contact/get/:search/:key",
+            "params": [
+              {
+                "name": "search",
+                "value": "schrodinger%40example.com",
+                "type": "path",
+                "description": "URL-encoded value to search for, e.g. a contact's email address."
+              },
+              {
+                "name": "key",
+                "value": "email",
+                "type": "path",
+                "description": "The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+              }
+            ]
+          },
+          "docs": "Retrieve the details of a single contact, searched by email (default) or by any other contact property such as `id`."
+        },
+        {
+          "info": {
+            "name": "Deactivate a contact",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/contact/remove/:search/:key",
+            "params": [
+              {
+                "name": "search",
+                "value": "schrodinger%40example.com",
+                "type": "path",
+                "description": "URL-encoded value to search for, e.g. a contact's email address."
+              },
+              {
+                "name": "key",
+                "value": "email",
+                "type": "path",
+                "description": "The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+              }
+            ]
+          },
+          "docs": "Sets a contact to inactive. The contact is not deleted from AskNicely — re-adding the contact reactivates them. Use the privacy endpoint for a true GDPR deletion."
+        },
+        {
+          "info": {
+            "name": "Delete a contact's personal data (GDPR)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/privacy/remove",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Removes all personal data for the named contacts and adds them to the blocklist so they cannot be re-added or surveyed. Intended for automated GDPR erasure requests. Accepts either a JSON body with a `contacts` array of email addresses, or a form-encoded `email` parameter."
+        },
+        {
+          "info": {
+            "name": "List unsubscribed contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/contacts/unsubscribed",
+            "params": [
+              {
+                "name": "pagenumber",
+                "value": "",
+                "type": "query",
+                "description": "Page to start from; must be greater than 0."
+              },
+              {
+                "name": "pagesize",
+                "value": "",
+                "type": "query",
+                "description": "Rows returned per page; must be greater than 0. Defaults to 1000."
+              }
+            ]
+          },
+          "docs": "Returns every contact that manually unsubscribed via the unsubscribe link in AskNicely survey emails. Pagination is optional; when used, `pagenumber` must be set. `pagesize` defaults to 1000."
+        },
+        {
+          "info": {
+            "name": "Deactivate all contacts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/contacts/deactivateall"
+          },
+          "docs": "Deactivates every active contact in the account. No data is lost and contacts can be reactivated. The endpoint returns HTTP 307 repeatedly until the operation completes, so the calling client MUST follow redirects."
+        },
+        {
+          "info": {
+            "name": "Bulk add contacts by uploading a CSV to a configured importer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/curlupload/:importerId",
+            "params": [
+              {
+                "name": "importerId",
+                "value": "1234",
+                "type": "path",
+                "description": "The identifier of the CSV Importer, shown on the final step of the importer setup."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Uploads a CSV file to a CSV Importer previously configured in the CSV Importer App. The importer's own settings determine how the data is mapped and whether surveys are sent. Payload limit is 6MB."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

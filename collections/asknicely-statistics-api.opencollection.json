@@ -1,0 +1,143 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "AskNicely Statistics API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-apikey",
+      "value": "{{X-apikey}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Statistics",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get the current NPS score",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/getnps/:days",
+            "params": [
+              {
+                "name": "days",
+                "value": "",
+                "type": "path",
+                "description": "Number of days back from today to calculate NPS over. Default is 30."
+              },
+              {
+                "name": "filters[]",
+                "value": "",
+                "type": "query",
+                "description": "Custom data field to filter on (repeatable, positionally paired with `values[]`)."
+              },
+              {
+                "name": "values[]",
+                "value": "",
+                "type": "query",
+                "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+              }
+            ]
+          },
+          "docs": "Returns the account's Net Promoter Score over a rolling window. Optional `filters[]`/`values[]` query pairs restrict the calculation to matching custom data field values."
+        },
+        {
+          "info": {
+            "name": "Get sent-survey statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/sentstats/:days",
+            "params": [
+              {
+                "name": "days",
+                "value": "",
+                "type": "path",
+                "description": "Number of days back from today for surveys sent. Default is 30."
+              },
+              {
+                "name": "filters[]",
+                "value": "",
+                "type": "query",
+                "description": "Custom data field to filter on (repeatable, positionally paired with `values[]`)."
+              },
+              {
+                "name": "values[]",
+                "value": "",
+                "type": "query",
+                "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+              }
+            ]
+          },
+          "docs": "Returns delivery and response statistics for surveys sent in the window. The published path template also accepts two optional trailing segments — `/{field}/{value}` — to filter on a single custom property, or on `question_type` with values `NPS`, `CSAT` or `FIVESTAR`. Multiple properties can be filtered with repeatable `filters[]`/`values[]` query pairs."
+        },
+        {
+          "info": {
+            "name": "Get historical survey statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/stats",
+            "params": [
+              {
+                "name": "year",
+                "value": "",
+                "type": "query",
+                "description": "Year to get stats for."
+              },
+              {
+                "name": "month",
+                "value": "",
+                "type": "query",
+                "description": "Month to get stats for."
+              },
+              {
+                "name": "day",
+                "value": "",
+                "type": "query",
+                "description": "Day to get stats for."
+              },
+              {
+                "name": "segment",
+                "value": "",
+                "type": "query",
+                "description": "Restrict stats to this segment only."
+              },
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "Unix timestamp for all responses sent at or after this time."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "Unix timestamp for all responses sent at or before this time."
+              },
+              {
+                "name": "include-delay",
+                "value": "",
+                "type": "query",
+                "description": "Offset the date by `delayminutes`."
+              }
+            ]
+          },
+          "docs": "Returns day-by-day historical sending, delivery, open, response and score statistics."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,2692 @@
+{
+  "item": [
+    {
+      "id": "b9d94efb-ff0e-4de2-9339-1592a2875240",
+      "name": "Contacts",
+      "description": {
+        "content": "Import, look up, deactivate and privacy-delete contacts.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b81c0164-720c-441e-9166-7f7fb1a71d0f",
+          "name": "Import a contact and trigger a survey",
+          "request": {
+            "name": "Import a contact and trigger a survey",
+            "description": {
+              "content": "Adds or updates a single contact and, subject to the first Global Contact Rule configured on the Send page, sends them a survey. Contacts whose address is on the Blocklist are not imported. Multi-value custom fields are not supported here — use the bulk endpoint. A separate, lower rate limit applies to this operation (100 req/10s, 500 req/60s).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contact",
+                "trigger"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "email",
+                  "value": "<email>",
+                  "description": "(Required) Contact email address."
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Full name. Alternatively send firstname and lastname."
+                },
+                {
+                  "disabled": false,
+                  "key": "firstname",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "lastname",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "addcontact",
+                  "value": "<boolean>",
+                  "description": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow."
+                },
+                {
+                  "disabled": false,
+                  "key": "delayminutes",
+                  "value": "<integer>",
+                  "description": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately."
+                },
+                {
+                  "disabled": false,
+                  "key": "triggeremail",
+                  "value": "<boolean>",
+                  "description": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent."
+                },
+                {
+                  "disabled": false,
+                  "key": "thendeactivate",
+                  "value": "<boolean>",
+                  "description": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true."
+                },
+                {
+                  "disabled": false,
+                  "key": "segment",
+                  "value": "<string>",
+                  "description": "The contact's segment."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "42444f2f-349f-480b-bb51-51eafb38f259",
+              "name": "Request accepted. `survey_sent` indicates whether a survey was actually delivered.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "trigger"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Contact email address.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Full name. Alternatively send firstname and lastname.",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "firstname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "lastname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.",
+                        "type": "text/plain"
+                      },
+                      "key": "addcontact",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.",
+                        "type": "text/plain"
+                      },
+                      "key": "delayminutes",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.",
+                        "type": "text/plain"
+                      },
+                      "key": "triggeremail",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.",
+                        "type": "text/plain"
+                      },
+                      "key": "thendeactivate",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The contact's segment.",
+                        "type": "text/plain"
+                      },
+                      "key": "segment",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": [\n    {\n      \"survey_sent\": true,\n      \"id\": \"15968\",\n      \"email\": \"schrodinger@example.com\",\n      \"msg\": \"Message Sent\"\n    }\n  ],\n  \"success\": true,\n  \"surveys_sent\": 1\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "84d6a1c4-e1f6-490a-b3d3-6fe1e80d7cd0",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "trigger"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Contact email address.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Full name. Alternatively send firstname and lastname.",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "firstname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "lastname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.",
+                        "type": "text/plain"
+                      },
+                      "key": "addcontact",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.",
+                        "type": "text/plain"
+                      },
+                      "key": "delayminutes",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.",
+                        "type": "text/plain"
+                      },
+                      "key": "triggeremail",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.",
+                        "type": "text/plain"
+                      },
+                      "key": "thendeactivate",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The contact's segment.",
+                        "type": "text/plain"
+                      },
+                      "key": "segment",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b01544f8-45b2-480f-aa19-7087f77959d4",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "trigger"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Contact email address.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Full name. Alternatively send firstname and lastname.",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "firstname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "lastname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.",
+                        "type": "text/plain"
+                      },
+                      "key": "addcontact",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.",
+                        "type": "text/plain"
+                      },
+                      "key": "delayminutes",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.",
+                        "type": "text/plain"
+                      },
+                      "key": "triggeremail",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.",
+                        "type": "text/plain"
+                      },
+                      "key": "thendeactivate",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The contact's segment.",
+                        "type": "text/plain"
+                      },
+                      "key": "segment",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "60b56b2d-c22d-4d84-a1d8-9cad6a481f73",
+          "name": "Bulk add or update contacts, optionally triggering surveys",
+          "request": {
+            "name": "Bulk add or update contacts, optionally triggering surveys",
+            "description": {
+              "content": "Asynchronous bulk import. Accepts a JSON body with a top-level `contacts` array; each contact requires `email` and may carry `name`, `segment` and any number of custom data fields (suffix `_c`), including multi-value arrays. Setting `\"obeyrules\": true` triggers surveys for eligible contacts under the Global Contact Rules. Payload limit is 6MB. Valid payloads return HTTP 201 immediately and are processed asynchronously — no per-contact result is returned.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contacts",
+                "add"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contacts\": [\n    {\n      \"email\": \"<email>\",\n      \"name\": \"<string>\",\n      \"segment\": \"<string>\"\n    },\n    {\n      \"email\": \"<email>\",\n      \"name\": \"<string>\",\n      \"segment\": \"<string>\"\n    }\n  ],\n  \"obeyrules\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a42310f6-25ea-4378-a2a9-114dfca339ab",
+              "name": "Successfully added/updated; processing continues asynchronously.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e6cc6bc4-da12-4fc8-9d07-4b5d7f141de2",
+              "name": "Contacts data missing, malformed JSON, or `contacts` is not an array.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"no data found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "14445745-4ea9-4182-81bb-e0ece9499ece",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1e17635f-625c-46ca-8930-4b30d28c6af9",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c03a0afd-b933-41fe-8014-d9264fc41a9f",
+              "name": "Internal server error, or the request body exceeded 6MB.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "621cc376-1404-4f4f-9e03-d0c1c46d7439",
+          "name": "Get a contact",
+          "request": {
+            "name": "Get a contact",
+            "description": {
+              "content": "Retrieve the details of a single contact, searched by email (default) or by any other contact property such as `id`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contact",
+                "get",
+                ":search",
+                ":key"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "search",
+                  "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "email",
+                  "key": "key",
+                  "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                },
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b0c719ef-7111-4f5f-95f3-6bc3c729f43e",
+              "name": "The matching contact.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "get",
+                    ":search",
+                    ":key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "search",
+                      "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "email",
+                      "key": "key",
+                      "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"15816\",\n    \"lastemailed\": \"1452219376\",\n    \"active\": \"1\",\n    \"created\": \"1418350105\",\n    \"scheduled\": \"0\",\n    \"name\": \"John Ballinger\",\n    \"email\": \"john@asknice.ly\",\n    \"segment\": \"VIP Customer\",\n    \"importedattime\": \"1450653162\",\n    \"source\": \"intercom\",\n    \"intercomid\": \"548a4e19bcdac3592e0019b7\",\n    \"unsubscribetime\": null\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e36d8abd-5d99-4496-9664-165f57e565ae",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "get",
+                    ":search",
+                    ":key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "search",
+                      "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "email",
+                      "key": "key",
+                      "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "644a9409-6a86-40c1-88d6-0ef9e3b476a7",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "get",
+                    ":search",
+                    ":key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "search",
+                      "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "email",
+                      "key": "key",
+                      "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f57e22c6-45a6-4e06-b420-6aaf4c95f090",
+          "name": "Deactivate a contact",
+          "request": {
+            "name": "Deactivate a contact",
+            "description": {
+              "content": "Sets a contact to inactive. The contact is not deleted from AskNicely — re-adding the contact reactivates them. Use the privacy endpoint for a true GDPR deletion.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contact",
+                "remove",
+                ":search",
+                ":key"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "search",
+                  "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "email",
+                  "key": "key",
+                  "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                },
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ec2c6a38-3904-4445-ad06-16640743b876",
+              "name": "The contact that was deactivated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "remove",
+                    ":search",
+                    ":key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "search",
+                      "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "email",
+                      "key": "key",
+                      "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"msg\": \"removed\",\n  \"data\": {\n    \"id\": \"15816\",\n    \"lastemailed\": \"1452219376\",\n    \"active\": \"1\",\n    \"created\": \"1418350105\",\n    \"scheduled\": \"0\",\n    \"name\": \"John Ballinger\",\n    \"email\": \"john@asknice.ly\",\n    \"segment\": \"VIP Customer\",\n    \"importedattime\": \"1450653162\",\n    \"source\": \"intercom\",\n    \"intercomid\": \"548a4e19bcdac3592e0019b7\",\n    \"unsubscribetime\": null\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "487a918c-d63f-4f10-852f-643ade393754",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "remove",
+                    ":search",
+                    ":key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "search",
+                      "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "email",
+                      "key": "key",
+                      "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e956f40c-aab9-4c4d-b6e5-6ef8c547c5a7",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "remove",
+                    ":search",
+                    ":key"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "search",
+                      "description": "(Required) URL-encoded value to search for, e.g. a contact's email address."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "email",
+                      "key": "key",
+                      "description": "(Required) The field to search by. Defaults to `email`; may be `id` or any custom property set via the API."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3401e1ed-d6d8-4249-81c4-5b5891900a02",
+          "name": "Delete a contact's personal data (GDPR)",
+          "request": {
+            "name": "Delete a contact's personal data (GDPR)",
+            "description": {
+              "content": "Removes all personal data for the named contacts and adds them to the blocklist so they cannot be re-added or surveyed. Intended for automated GDPR erasure requests. Accepts either a JSON body with a `contacts` array of email addresses, or a form-encoded `email` parameter.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "privacy",
+                "remove"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "email",
+                  "value": "<email>",
+                  "description": "(Required) Email of the contact to delete."
+                },
+                {
+                  "disabled": false,
+                  "key": "skipnotify",
+                  "value": "0",
+                  "description": "Set to 1 to suppress notifying the primary AskNicely user."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "78f19f93-0e96-452a-a21b-e3b44fab219e",
+              "name": "Contact personal data removed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "privacy",
+                    "remove"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Email of the contact to delete.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Set to 1 to suppress notifying the primary AskNicely user.",
+                        "type": "text/plain"
+                      },
+                      "key": "skipnotify",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"msg\": \"contact removed\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "797aa4a6-2985-4c0f-9d40-60f96e88e6aa",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "privacy",
+                    "remove"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Email of the contact to delete.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Set to 1 to suppress notifying the primary AskNicely user.",
+                        "type": "text/plain"
+                      },
+                      "key": "skipnotify",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ccdb75ef-c7a0-4dc5-b0b0-742ba913842b",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "privacy",
+                    "remove"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Email of the contact to delete.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Set to 1 to suppress notifying the primary AskNicely user.",
+                        "type": "text/plain"
+                      },
+                      "key": "skipnotify",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d090e1e7-6f2f-4f2b-9683-93b8e785ddf5",
+          "name": "List unsubscribed contacts",
+          "request": {
+            "name": "List unsubscribed contacts",
+            "description": {
+              "content": "Returns every contact that manually unsubscribed via the unsubscribe link in AskNicely survey emails. Pagination is optional; when used, `pagenumber` must be set. `pagesize` defaults to 1000.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contacts",
+                "unsubscribed"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "pagenumber",
+                  "value": "<integer>",
+                  "description": "Page to start from; must be greater than 0."
+                },
+                {
+                  "disabled": false,
+                  "key": "pagesize",
+                  "value": "1000",
+                  "description": "Rows returned per page; must be greater than 0. Defaults to 1000."
+                }
+              ],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fdb7f1d9-bd4e-4daf-a3ed-37163a5526ab",
+              "name": "The unsubscribed contacts. `id` is the contact id.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "unsubscribed"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pagenumber",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "pagesize",
+                      "value": "1000"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": \"15816\",\n      \"unsubscribetime\": \"1452219376\",\n      \"email\": \"test@example.com\"\n    },\n    {\n      \"id\": \"16838\",\n      \"unsubscribetime\": \"14522193485\",\n      \"email\": \"test2@example.com\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5fe2ab04-afbc-4749-b8b5-f0d86ef17877",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "unsubscribed"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pagenumber",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "pagesize",
+                      "value": "1000"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4a995017-be69-4aaf-91fb-fa1d2f1e4fc0",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "unsubscribed"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "pagenumber",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "pagesize",
+                      "value": "1000"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "837ae6e5-72f4-401a-8a05-d0cf99197436",
+          "name": "Deactivate all contacts",
+          "request": {
+            "name": "Deactivate all contacts",
+            "description": {
+              "content": "Deactivates every active contact in the account. No data is lost and contacts can be reactivated. The endpoint returns HTTP 307 repeatedly until the operation completes, so the calling client MUST follow redirects.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contacts",
+                "deactivateall"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "6854d4a9-5b1e-4f68-8b32-f75b6cb7a575",
+              "name": "All contacts deactivated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "deactivateall"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"msg\": \"Deactivated 121 contacts\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6cf5fc7c-d9f6-4813-8fcd-98308a70925a",
+              "name": "Temporary redirect — work is still in progress. Follow the redirect and repeat.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "deactivateall"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Temporary Redirect (since HTTP/1.1)",
+              "code": 307,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a2f80fb9-9476-4d49-8c14-040e67b86b21",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "deactivateall"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e6ed099e-7642-41a4-997c-87fc60dc1851",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "deactivateall"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "390a23b2-bb5a-4328-968d-f47b6f3f81cb",
+          "name": "Bulk add contacts by uploading a CSV to a configured importer",
+          "request": {
+            "name": "Bulk add contacts by uploading a CSV to a configured importer",
+            "description": {
+              "content": "Uploads a CSV file to a CSV Importer previously configured in the CSV Importer App. The importer's own settings determine how the data is mapped and whether surveys are sent. Payload limit is 6MB.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "curlupload",
+                ":importerId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "importerId",
+                  "description": "(Required) The identifier of the CSV Importer, shown on the final step of the importer setup."
+                },
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "(Required) The CSV file, in the column format configured for this importer."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f1111fbd-9934-4a4d-80dc-da98cad27290",
+              "name": "File accepted; it will be imported per the CSV Importer settings.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "curlupload",
+                    ":importerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "importerId",
+                      "description": "(Required) The identifier of the CSV Importer, shown on the final step of the importer setup."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The CSV file, in the column format configured for this importer.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "208f0984-0383-46a2-8494-2fe36ce45fdb",
+              "name": "Invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "curlupload",
+                    ":importerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "importerId",
+                      "description": "(Required) The identifier of the CSV Importer, shown on the final step of the importer setup."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The CSV file, in the column format configured for this importer.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Could not find user with API key\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6f86c78f-e830-40f9-ac17-464b7cfa64b6",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "curlupload",
+                    ":importerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "importerId",
+                      "description": "(Required) The identifier of the CSV Importer, shown on the final step of the importer setup."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) The CSV file, in the column format configured for this importer.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3178"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3178"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "demo",
+      "key": "domain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{domain}}.asknice.ly/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-apikey"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "6ad3913e-42cf-44f2-83b8-f335dca06405",
+    "name": "AskNicely Contacts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).\n\nThis document was assembled by API Evangelist from AskNicely's own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.\n\nContact Support:\n Name: AskNicely Support\n Email: support@asknice.ly",
+      "type": "text/plain"
+    }
+  }
+}

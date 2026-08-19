@@ -2,10 +2,10 @@ generated: '2026-08-06'
 method: searched
 status: published
 source: https://asknicely.zendesk.com/hc/en-us/articles/51310930486292-Adding-AskNicely-as-a-Custom-Connector-in-Claude
-description: >-
-  AskNicely ships a first-party remote MCP server that exposes Ask NiceAI — its in-product AI assistant —
-  to external MCP clients. It is served per tenant at https://{domain}.asknice.ly/mcp and is documented
-  by AskNicely as a Claude custom connector. Access requires the Ask NiceAI add-on on the account.
+description: AskNicely ships a first-party remote MCP server that exposes Ask NiceAI — its in-product
+  AI assistant — to external MCP clients. It is served per tenant at https://{domain}.asknice.ly/mcp and
+  is documented by AskNicely as a Claude custom connector. Access requires the Ask NiceAI add-on on the
+  account.
 server:
   name: asknicely
   product: Ask NiceAI
@@ -21,28 +21,37 @@ authorization:
   metadata:
     authorization_server_metadata: https://mcp.asknice.ly/.well-known/oauth-authorization-server
     protected_resource_metadata: https://mcp.asknice.ly/.well-known/oauth-protected-resource
-    spec: [RFC 8414, RFC 9728]
+    spec:
+    - RFC 8414
+    - RFC 9728
   authorization_endpoint: https://mcp.asknice.ly/authorize
   token_endpoint: https://mcp.asknice.ly/token
   revocation_endpoint: https://mcp.asknice.ly/revoke
   registration_endpoint: https://mcp.asknice.ly/register
   dynamic_client_registration: true
-  dcr_auth_methods: [none]
-  grant_types: [authorization_code, refresh_token]
-  code_challenge_methods: [S256]
-  token_endpoint_auth_methods: [none, client_secret_basic, client_secret_post]
+  dcr_auth_methods:
+  - none
+  grant_types:
+  - authorization_code
+  - refresh_token
+  code_challenge_methods:
+  - S256
+  token_endpoint_auth_methods:
+  - none
+  - client_secret_basic
+  - client_secret_post
   resource_parameter_supported: true
-  bearer_methods_supported: [header]
-  scopes: [tools]
+  bearer_methods_supported:
+  - header
+  scopes:
+  - tools
 tools:
   introspection: gated
   published_list: false
-  note: >-
-    tools/list is auth-gated — an anonymous JSON-RPC POST returns HTTP 401 with
-    WWW-Authenticate: Bearer error="invalid_token" and a resource_metadata pointer. AskNicely publishes
-    no static tool manifest, so no inputSchema could be captured. The capability areas below are the ones
-    AskNicely names in its own Ask NiceAI documentation; they are capability descriptions, NOT verified
-    tool names.
+  note: 'tools/list is auth-gated — an anonymous JSON-RPC POST returns HTTP 401 with WWW-Authenticate:
+    Bearer error="invalid_token" and a resource_metadata pointer. AskNicely publishes no static tool manifest,
+    so no inputSchema could be captured. The capability areas below are the ones AskNicely names in its
+    own Ask NiceAI documentation; they are capability descriptions, NOT verified tool names.'
   capability_areas:
   - name: NPS summaries
     source: https://asknicely.zendesk.com/hc/en-us/articles/46840078787988-Ask-NiceAI
@@ -60,8 +69,28 @@ clients_documented:
 - name: Claude (custom connector)
   docs: https://asknicely.zendesk.com/hc/en-us/articles/51310930486292-Adding-AskNicely-as-a-Custom-Connector-in-Claude
 x-evidence:
-- {url: 'https://mcp.asknice.ly/.well-known/oauth-authorization-server', http_status: 200, content_type: application/json}
-- {url: 'https://mcp.asknice.ly/.well-known/oauth-protected-resource', http_status: 200, content_type: application/json}
-- {url: 'https://nicely.asknice.ly/.well-known/oauth-protected-resource', http_status: 200, content_type: application/json}
-- {url: 'https://nicely.asknice.ly/mcp', method: 'POST tools/list', http_status: 401, body: '{"error":"invalid_token"}'}
-- {url: 'https://demo.asknice.ly/.well-known/oauth-authorization-server', http_status: 200, content_type: application/json}
+- url: https://mcp.asknice.ly/.well-known/oauth-authorization-server
+  http_status: 200
+  content_type: application/json
+- url: https://mcp.asknice.ly/.well-known/oauth-protected-resource
+  http_status: 200
+  content_type: application/json
+- url: https://nicely.asknice.ly/.well-known/oauth-protected-resource
+  http_status: 200
+  content_type: application/json
+- url: https://nicely.asknice.ly/mcp
+  method: POST tools/list
+  http_status: 401
+  body: '{"error":"invalid_token"}'
+- url: https://demo.asknice.ly/.well-known/oauth-authorization-server
+  http_status: 200
+  content_type: application/json
+deployment:
+  mode: none
+  endpoint: https://{domain}.asknice.ly/mcp
+  verified: probed
+  probe: dead
+  note: the endpoint this manifest claimed did not answer; recorded as none rather than deleted so the
+    claim stays auditable
+  checked: '2026-08-12'
+  source: catalog MCP census

@@ -1,0 +1,957 @@
+{
+  "item": [
+    {
+      "id": "fffc769e-081d-44b9-b6c7-9e6e912c8a90",
+      "name": "Surveys",
+      "description": {
+        "content": "Trigger NPS/CSAT/5-Star surveys to contacts.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "65d0c9bb-0d59-4662-ae60-79d0e2e2ba9b",
+          "name": "Import a contact and trigger a survey",
+          "request": {
+            "name": "Import a contact and trigger a survey",
+            "description": {
+              "content": "Adds or updates a single contact and, subject to the first Global Contact Rule configured on the Send page, sends them a survey. Contacts whose address is on the Blocklist are not imported. Multi-value custom fields are not supported here — use the bulk endpoint. A separate, lower rate limit applies to this operation (100 req/10s, 500 req/60s).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contact",
+                "trigger"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "email",
+                  "value": "<email>",
+                  "description": "(Required) Contact email address."
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Full name. Alternatively send firstname and lastname."
+                },
+                {
+                  "disabled": false,
+                  "key": "firstname",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "lastname",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "addcontact",
+                  "value": "<boolean>",
+                  "description": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow."
+                },
+                {
+                  "disabled": false,
+                  "key": "delayminutes",
+                  "value": "<integer>",
+                  "description": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately."
+                },
+                {
+                  "disabled": false,
+                  "key": "triggeremail",
+                  "value": "<boolean>",
+                  "description": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent."
+                },
+                {
+                  "disabled": false,
+                  "key": "thendeactivate",
+                  "value": "<boolean>",
+                  "description": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true."
+                },
+                {
+                  "disabled": false,
+                  "key": "segment",
+                  "value": "<string>",
+                  "description": "The contact's segment."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a7e418ea-b6f1-4345-b2cc-8266007fbda8",
+              "name": "Request accepted. `survey_sent` indicates whether a survey was actually delivered.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "trigger"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Contact email address.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Full name. Alternatively send firstname and lastname.",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "firstname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "lastname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.",
+                        "type": "text/plain"
+                      },
+                      "key": "addcontact",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.",
+                        "type": "text/plain"
+                      },
+                      "key": "delayminutes",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.",
+                        "type": "text/plain"
+                      },
+                      "key": "triggeremail",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.",
+                        "type": "text/plain"
+                      },
+                      "key": "thendeactivate",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The contact's segment.",
+                        "type": "text/plain"
+                      },
+                      "key": "segment",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": [\n    {\n      \"survey_sent\": true,\n      \"id\": \"15968\",\n      \"email\": \"schrodinger@example.com\",\n      \"msg\": \"Message Sent\"\n    }\n  ],\n  \"success\": true,\n  \"surveys_sent\": 1\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6956fb9a-ded3-4536-b759-2a36e91edd52",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "trigger"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Contact email address.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Full name. Alternatively send firstname and lastname.",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "firstname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "lastname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.",
+                        "type": "text/plain"
+                      },
+                      "key": "addcontact",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.",
+                        "type": "text/plain"
+                      },
+                      "key": "delayminutes",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.",
+                        "type": "text/plain"
+                      },
+                      "key": "triggeremail",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.",
+                        "type": "text/plain"
+                      },
+                      "key": "thendeactivate",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The contact's segment.",
+                        "type": "text/plain"
+                      },
+                      "key": "segment",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c2fbc597-8543-4a1d-a978-44273cd1c8aa",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contact",
+                    "trigger"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Contact email address.",
+                        "type": "text/plain"
+                      },
+                      "key": "email",
+                      "value": "<email>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Full name. Alternatively send firstname and lastname.",
+                        "type": "text/plain"
+                      },
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "firstname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "key": "lastname",
+                      "value": "<string>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.",
+                        "type": "text/plain"
+                      },
+                      "key": "addcontact",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.",
+                        "type": "text/plain"
+                      },
+                      "key": "delayminutes",
+                      "value": "<integer>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.",
+                        "type": "text/plain"
+                      },
+                      "key": "triggeremail",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.",
+                        "type": "text/plain"
+                      },
+                      "key": "thendeactivate",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The contact's segment.",
+                        "type": "text/plain"
+                      },
+                      "key": "segment",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "2"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6e00b7a3-b1de-4199-8c5d-98c9d7a37d5a",
+          "name": "Bulk add or update contacts, optionally triggering surveys",
+          "request": {
+            "name": "Bulk add or update contacts, optionally triggering surveys",
+            "description": {
+              "content": "Asynchronous bulk import. Accepts a JSON body with a top-level `contacts` array; each contact requires `email` and may carry `name`, `segment` and any number of custom data fields (suffix `_c`), including multi-value arrays. Setting `\"obeyrules\": true` triggers surveys for eligible contacts under the Global Contact Rules. Payload limit is 6MB. Valid payloads return HTTP 201 immediately and are processed asynchronously — no per-contact result is returned.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "contacts",
+                "add"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contacts\": [\n    {\n      \"email\": \"<email>\",\n      \"name\": \"<string>\",\n      \"segment\": \"<string>\"\n    },\n    {\n      \"email\": \"<email>\",\n      \"name\": \"<string>\",\n      \"segment\": \"<string>\"\n    }\n  ],\n  \"obeyrules\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "55d2ab82-36c4-41c9-ba4d-9ad04bc9ead7",
+              "name": "Successfully added/updated; processing continues asynchronously.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "60474bc9-97f7-4f5e-9bd2-e3c6b354a93b",
+              "name": "Contacts data missing, malformed JSON, or `contacts` is not an array.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"no data found\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "44f94dc4-a6e2-4203-9e10-c860a62b1d4b",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ffe26e4a-233c-4394-b92e-a932704e42c9",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "2"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "2"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "37d841c4-282b-4703-a8dc-f90eae0e5793",
+              "name": "Internal server error, or the request body exceeded 6MB.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "contacts",
+                    "add"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"contacts\": [\n    {\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"region\": \"West\",\n      \"account_owner\": \"Sarah\"\n    },\n    {\n      \"name\": \"John Smith\",\n      \"email\": \"john@example.com\",\n      \"region\": \"East\",\n      \"account_owner\": \"Tom\"\n    }\n  ],\n  \"obeyrules\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Internal Server Error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "demo",
+      "key": "domain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{domain}}.asknice.ly/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-apikey"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "b6325e46-f5d1-46e5-83f1-f31ca2cbe637",
+    "name": "AskNicely Surveys API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).\n\nThis document was assembled by API Evangelist from AskNicely's own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.\n\nContact Support:\n Name: AskNicely Support\n Email: support@asknice.ly",
+      "type": "text/plain"
+    }
+  }
+}

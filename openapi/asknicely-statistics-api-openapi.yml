@@ -1,0 +1,375 @@
+openapi: 3.2.0
+info:
+  title: AskNicely Statistics API
+  version: v1
+  summary: Contact, survey-trigger, response, statistics and privacy operations for the AskNicely customer-experience (NPS/CSAT/5-Star) platform.
+  description: 'The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).
+
+
+    This document was assembled by API Evangelist from AskNicely''s own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.'
+  termsOfService: https://www.asknicely.com/terms
+  contact:
+    name: AskNicely Support
+    email: support@asknice.ly
+    url: https://asknicely.zendesk.com/hc/en-us
+  x-source: https://demo.asknice.ly/help/apidocs
+  x-generated-by: API Evangelist enrichment pipeline
+servers:
+- url: https://{domain}.asknice.ly/api/v1
+  description: Per-tenant AskNicely API host. Replace {domain} with your AskNicely subdomain.
+  variables:
+    domain:
+      default: demo
+      description: Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).
+security:
+- apiKeyAuth: []
+tags:
+- name: Statistics
+  description: NPS, sent and historical survey statistics.
+paths:
+  /getnps/{days}:
+    get:
+      operationId: getNps
+      tags:
+      - Statistics
+      summary: Get the current NPS score
+      description: Returns the account's Net Promoter Score over a rolling window. Optional `filters[]`/`values[]` query pairs restrict the calculation to matching custom data field values.
+      x-source: https://demo.asknice.ly/help/apidocs/getnps
+      parameters:
+      - name: days
+        in: path
+        required: true
+        description: Number of days back from today to calculate NPS over. Default is 30.
+        schema:
+          type: integer
+          default: 30
+      - name: filters[]
+        in: query
+        required: false
+        description: Custom data field to filter on (repeatable, positionally paired with `values[]`).
+        schema:
+          type: array
+          items:
+            type: string
+      - name: values[]
+        in: query
+        required: false
+        description: Value for the correspondingly-positioned `filters[]` entry (repeatable).
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: The NPS score for the window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NpsResult'
+              examples:
+                unfiltered:
+                  summary: NPS for the last 30 days
+                  value:
+                    NPS: '64.5'
+                filtered:
+                  summary: NPS filtered by country and city
+                  value:
+                    NPS: '51.1'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /sentstats/{days}:
+    get:
+      operationId: getSentStats
+      tags:
+      - Statistics
+      summary: Get sent-survey statistics
+      description: Returns delivery and response statistics for surveys sent in the window. The published path template also accepts two optional trailing segments — `/{field}/{value}` — to filter on a single custom property, or on `question_type` with values `NPS`, `CSAT` or `FIVESTAR`. Multiple properties can be filtered with repeatable `filters[]`/`values[]` query pairs.
+      x-source: https://demo.asknice.ly/help/apidocs/sentstats
+      parameters:
+      - name: days
+        in: path
+        required: true
+        description: Number of days back from today for surveys sent. Default is 30.
+        schema:
+          type: integer
+          default: 30
+      - name: filters[]
+        in: query
+        required: false
+        description: Custom data field to filter on (repeatable, positionally paired with `values[]`).
+        schema:
+          type: array
+          items:
+            type: string
+      - name: values[]
+        in: query
+        required: false
+        description: Value for the correspondingly-positioned `filters[]` entry (repeatable).
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: Sent-survey statistics for the window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentStats'
+              example:
+                sent: 6
+                delivered: 6
+                opened: 3
+                responded: 2
+                promoters: 0
+                passives: 0
+                detractors: 2
+                responserate: 33.3%
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /stats:
+    get:
+      operationId: getHistoricalStats
+      tags:
+      - Statistics
+      summary: Get historical survey statistics
+      description: Returns day-by-day historical sending, delivery, open, response and score statistics.
+      x-source: https://demo.asknice.ly/help/apidocs/stats
+      parameters:
+      - name: year
+        in: query
+        required: false
+        description: Year to get stats for.
+        schema:
+          type: integer
+      - name: month
+        in: query
+        required: false
+        description: Month to get stats for.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 12
+      - name: day
+        in: query
+        required: false
+        description: Day to get stats for.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 31
+      - name: segment
+        in: query
+        required: false
+        description: Restrict stats to this segment only.
+        schema:
+          type: string
+      - name: start_time
+        in: query
+        required: false
+        description: Unix timestamp for all responses sent at or after this time.
+        schema:
+          type: integer
+      - name: end_time
+        in: query
+        required: false
+        description: Unix timestamp for all responses sent at or before this time.
+        schema:
+          type: integer
+      - name: include-delay
+        in: query
+        required: false
+        description: Offset the date by `delayminutes`.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Historical statistics rows.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricalStatsEnvelope'
+              example:
+                success: true
+                data:
+                - year: '2023'
+                  month: '8'
+                  day: '16'
+                  weekday: Thu
+                  sent: '5'
+                  delivered: '5'
+                  opened: '3'
+                  responded: '2'
+                  promoters: '1'
+                  passives: '1'
+                  detractors: '0'
+                  nps: '50.0'
+                  fivestar: null
+                  csat: null
+                  comment_length: '68'
+                  comment_responded_percent: '100.0'
+                  surveys_responded_percent: '40.0'
+                  surveys_opened_responded_percent: '66.7'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+components:
+  schemas:
+    RateLimitError:
+      allOf:
+      - $ref: '#/components/schemas/ErrorEnvelope'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Which window was exceeded, e.g. req-10s or req-60s.
+          count:
+            type: integer
+            description: Requests made in the window.
+          limit:
+            type: integer
+            description: Requests permitted in the window.
+    HistoricalStatsRow:
+      type: object
+      properties:
+        year:
+          type: string
+        month:
+          type: string
+        day:
+          type: string
+        weekday:
+          type: string
+        sent:
+          type: string
+        delivered:
+          type: string
+        opened:
+          type: string
+        responded:
+          type: string
+        promoters:
+          type: string
+        passives:
+          type: string
+        detractors:
+          type: string
+        nps:
+          type: string
+        fivestar:
+          type:
+          - string
+          - 'null'
+        csat:
+          type:
+          - string
+          - 'null'
+        comment_length:
+          type: string
+        comment_responded_percent:
+          type: string
+        surveys_responded_percent:
+          type: string
+        surveys_opened_responded_percent:
+          type: string
+    NpsResult:
+      type: object
+      properties:
+        NPS:
+          type: string
+          description: The Net Promoter Score for the window.
+    ErrorEnvelope:
+      type: object
+      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
+      properties:
+        success:
+          type: boolean
+          const: false
+        msg:
+          type: string
+          description: Human-readable error message.
+      required:
+      - success
+      - msg
+    HistoricalStatsEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistoricalStatsRow'
+    SentStats:
+      type: object
+      properties:
+        sent:
+          type: integer
+        delivered:
+          type: integer
+        opened:
+          type: integer
+        responded:
+          type: integer
+        promoters:
+          type: integer
+        passives:
+          type: integer
+        detractors:
+          type: integer
+        responserate:
+          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: We could not find the api key, or it was not set []
+    RateLimited:
+      description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+        RateLimit-Req10s-Limit:
+          description: Requests permitted in the rolling 10-second window.
+          schema:
+            type: integer
+        RateLimit-Req10s-Remaining:
+          description: Requests remaining in the rolling 10-second window.
+          schema:
+            type: integer
+        RateLimit-Req60s-Limit:
+          description: Requests permitted in the rolling 60-second window.
+          schema:
+            type: integer
+        RateLimit-Req60s-Remaining:
+          description: Requests remaining in the rolling 60-second window.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitError'
+          example:
+            success: false
+            msg: 'Rate limit hit: reduce the rate of requests and retry'
+            type: req-10s
+            count: 201
+            limit: 200
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-apikey
+      description: The account API key, found in-platform under Settings > API. Every AskNicely user is issued their own key; create a separate user to isolate API traffic. Sending an invalid or missing key returns HTTP 401.

@@ -1,0 +1,150 @@
+{
+  "item": [
+    {
+      "id": "117f327a-4f2b-4ccb-802b-47e23de45bef",
+      "name": "In-App Surveys",
+      "description": {
+        "content": "Server-to-server negotiation of an in-app survey slug.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "476fc357-f130-4f36-947c-eccc9dbb4d34",
+          "name": "Request an in-app survey slug",
+          "request": {
+            "name": "Request an in-app survey slug",
+            "description": {
+              "content": "Exchanges a signed contact identity for a survey slug. Survey slugs identify who is receiving the survey and record their responses. The `email_hash` is an HMAC-SHA256 of the contact's email address keyed with your account secret key (available in-platform); AskNicely publishes PHP, Ruby, Python, Java and C# examples for producing it, plus a hash verification tool on the docs page.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "service",
+                "inapp.php"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "id",
+                  "value": "<string>",
+                  "description": "(Required) A single-use, dash-free, 16-character UUID that prevents duplicate submissions."
+                }
+              ],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain.",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domain_key\": \"<string>\",\n  \"template_name\": \"<string>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"email_hash\": \"<string>\",\n  \"created\": \"<string>\",\n  \"force\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "6bc19b02-8dca-4f97-8935-81c0c5545797",
+              "name": "A survey slug that can be used to render the survey to the user.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "service",
+                    "inapp.php"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "id",
+                      "value": "2ee42628423611ed"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain.",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"domain_key\": \"DEMO\",\n  \"template_name\": \"default\",\n  \"name\": \"Erwin Schrodinger\",\n  \"email\": \"schrodinger@example.com\",\n  \"email_hash\": \"df462ce404bbae11bd4e5860682db02e86ccace29b1a4d631dc7fbe075e321c5\",\n  \"created\": \"1418350105\",\n  \"force\": true,\n  \"a_custom_property\": \"Sample String\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Your AskNicely account subdomain.",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "demo",
+      "key": "domain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{domain}}.asknice.ly",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "1ac19a40-33d0-4ecf-81c1-1c14336de1b5",
+    "name": "AskNicely In-App Survey In-App Surveys API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The AskNicely in-app survey flow is a three-step process for displaying a survey inside your own web or mobile surface rather than by email or SMS. Your server generates a one-time HMAC-SHA256 `email_hash` of the contact's email using your account secret key, posts it here to negotiate a survey slug, and then uses that slug to render the survey to the user. This endpoint sits outside the `/api/v1` REST surface and is authenticated by the email hash rather than by the `X-apikey` header.\n\nTranscribed by API Evangelist from AskNicely's published in-app survey reference at https://demo.asknice.ly/help/apidocs/inapp. AskNicely publishes no OpenAPI of its own.\n\nContact Support:\n Name: AskNicely Support\n Email: support@asknice.ly",
+      "type": "text/plain"
+    }
+  }
+}

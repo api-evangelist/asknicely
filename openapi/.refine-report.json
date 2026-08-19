@@ -1,0 +1,29 @@
+{
+  "provider": "asknicely",
+  "sources": [
+    "asknicely-contacts-api-openapi.yml",
+    "asknicely-in-app-surveys-api-openapi.yml",
+    "asknicely-responses-api-openapi.yml",
+    "asknicely-statistics-api-openapi.yml",
+    "asknicely-surveys-api-openapi.yml"
+  ],
+  "outputs": [
+    "asknicely-contacts-api-openapi.yml",
+    "asknicely-in-app-surveys-api-openapi.yml",
+    "asknicely-responses-api-openapi.yml",
+    "asknicely-statistics-api-openapi.yml",
+    "asknicely-surveys-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "asknicely-contacts-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "asknicely-in-app-surveys-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "asknicely-responses-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "asknicely-statistics-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "asknicely-surveys-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": []
+}

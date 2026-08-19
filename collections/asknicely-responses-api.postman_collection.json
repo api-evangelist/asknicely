@@ -1,0 +1,641 @@
+{
+  "item": [
+    {
+      "id": "0c0e5ca3-cfe3-4a3d-a93a-88b54b5c05e9",
+      "name": "Responses",
+      "description": {
+        "content": "Retrieve survey responses.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f9b1f5ec-ca29-494a-ba5c-79b072e9302c",
+          "name": "Get survey responses",
+          "request": {
+            "name": "Get survey responses",
+            "description": {
+              "content": "Retrieves detailed survey responses. Up to 50,000 responses may be requested per call; make multiple calls to page through more. Requests above the redirect threshold are redirected to a temporary file on S3, so the calling client MUST follow redirects. The published path template also accepts three further optional trailing segments — `/{filter}/{sort_by}/{end_time}` — where `filter` is one of `answered`, `raw` or `published`, `sort_by` is `sent` or `responded`, and `end_time` is a unix timestamp upper bound. `question_type` in each row indicates whether the response was to an NPS, CSAT or 5STAR survey.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "responses",
+                ":sortDirection",
+                ":pagesize",
+                ":pagenumber",
+                ":sinceTime",
+                ":format"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "includestatustime",
+                  "value": "<string>",
+                  "description": "Set to `yes` to also return the unix-timestamp `case_closed_time` for each response."
+                },
+                {
+                  "disabled": false,
+                  "key": "filters[]",
+                  "value": "<string>",
+                  "description": "Custom data field to filter on (repeatable). Must be paired positionally with `values[]`; the number and order of filters and values must match."
+                },
+                {
+                  "disabled": false,
+                  "key": "filters[]",
+                  "value": "<string>",
+                  "description": "Custom data field to filter on (repeatable). Must be paired positionally with `values[]`; the number and order of filters and values must match."
+                },
+                {
+                  "disabled": false,
+                  "key": "values[]",
+                  "value": "<string>",
+                  "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+                },
+                {
+                  "disabled": false,
+                  "key": "values[]",
+                  "value": "<string>",
+                  "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "asc",
+                  "key": "sortDirection",
+                  "description": "(Required) Sort direction. Defaults to `asc`."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "50000",
+                  "key": "pagesize",
+                  "description": "(Required) Rows per request. Default and maximum are both 50,000."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "pagenumber",
+                  "description": "(Required) Current page, starting at 1."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "sinceTime",
+                  "description": "(Required) Unix timestamp; return responses at or after this time."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "json",
+                  "key": "format",
+                  "description": "(Required) Response format."
+                },
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9f4918aa-058f-4a18-9ba0-9dd2d198ec41",
+              "name": "A page of survey responses.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "responses",
+                    ":sortDirection",
+                    ":pagesize",
+                    ":pagenumber",
+                    ":sinceTime",
+                    ":format"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "includestatustime",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "asc",
+                      "key": "sortDirection",
+                      "description": "(Required) Sort direction. Defaults to `asc`."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "50000",
+                      "key": "pagesize",
+                      "description": "(Required) Rows per request. Default and maximum are both 50,000."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "pagenumber",
+                      "description": "(Required) Current page, starting at 1."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "sinceTime",
+                      "description": "(Required) Unix timestamp; return responses at or after this time."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "json",
+                      "key": "format",
+                      "description": "(Required) Response format."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"total\": \"10395\",\n  \"totalpages\": \"2079\",\n  \"pagenumber\": \"1\",\n  \"pagesize\": \"5\",\n  \"since_time\": \"0\",\n  \"end_time\": \"1642981569\",\n  \"data\": [\n    {\n      \"response_id\": \"54120\",\n      \"person_id\": \"54121\",\n      \"contact_id\": \"54121\",\n      \"name\": \"Aiman Shakeel\",\n      \"email\": \"3d2c555c.39829842@example.com\",\n      \"answer\": \"8\",\n      \"answerlabel\": \"8\",\n      \"data\": null,\n      \"comment\": \"\",\n      \"note\": null,\n      \"status\": \"\",\n      \"dontcontact\": null,\n      \"sent\": \"1614192119\",\n      \"opened\": \"1614192119\",\n      \"responded\": \"1614192119\",\n      \"lastemailed\": \"1614192119\",\n      \"created\": \"1614192119\",\n      \"segment\": null,\n      \"question_type\": \"nps\",\n      \"published\": \"\",\n      \"publishedname\": \"\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e4dbca01-f041-44f8-8bdc-5d7e563edc77",
+              "name": "Redirect to a temporary S3 file holding the result set. Clients must follow redirects.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "responses",
+                    ":sortDirection",
+                    ":pagesize",
+                    ":pagenumber",
+                    ":sinceTime",
+                    ":format"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "includestatustime",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "asc",
+                      "key": "sortDirection",
+                      "description": "(Required) Sort direction. Defaults to `asc`."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "50000",
+                      "key": "pagesize",
+                      "description": "(Required) Rows per request. Default and maximum are both 50,000."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "pagenumber",
+                      "description": "(Required) Current page, starting at 1."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "sinceTime",
+                      "description": "(Required) Unix timestamp; return responses at or after this time."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "json",
+                      "key": "format",
+                      "description": "(Required) Response format."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Found",
+              "code": 302,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "7e42174b-fdea-4a3b-a22e-8984839cf759",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "responses",
+                    ":sortDirection",
+                    ":pagesize",
+                    ":pagenumber",
+                    ":sinceTime",
+                    ":format"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "includestatustime",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "asc",
+                      "key": "sortDirection",
+                      "description": "(Required) Sort direction. Defaults to `asc`."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "50000",
+                      "key": "pagesize",
+                      "description": "(Required) Rows per request. Default and maximum are both 50,000."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "pagenumber",
+                      "description": "(Required) Current page, starting at 1."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "sinceTime",
+                      "description": "(Required) Unix timestamp; return responses at or after this time."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "json",
+                      "key": "format",
+                      "description": "(Required) Response format."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a43b90d7-e052-425f-abab-ac1011ae18f8",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "responses",
+                    ":sortDirection",
+                    ":pagesize",
+                    ":pagenumber",
+                    ":sinceTime",
+                    ":format"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "includestatustime",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "asc",
+                      "key": "sortDirection",
+                      "description": "(Required) Sort direction. Defaults to `asc`."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "50000",
+                      "key": "pagesize",
+                      "description": "(Required) Rows per request. Default and maximum are both 50,000."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "pagenumber",
+                      "description": "(Required) Current page, starting at 1."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "sinceTime",
+                      "description": "(Required) Unix timestamp; return responses at or after this time."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "json",
+                      "key": "format",
+                      "description": "(Required) Response format."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "3196"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "3196"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "3196"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "3196"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "3196"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "demo",
+      "key": "domain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{domain}}.asknice.ly/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-apikey"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d363921b-6f65-494f-a30a-91f1a0923557",
+    "name": "AskNicely Responses API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).\n\nThis document was assembled by API Evangelist from AskNicely's own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.\n\nContact Support:\n Name: AskNicely Support\n Email: support@asknice.ly",
+      "type": "text/plain"
+    }
+  }
+}

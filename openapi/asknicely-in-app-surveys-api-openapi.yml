@@ -1,0 +1,97 @@
+openapi: 3.2.0
+info:
+  title: AskNicely In-App Survey In-App Surveys API
+  version: v1
+  summary: Negotiate a one-time survey slug so an NPS/CSAT/5-Star survey can be rendered inside a website or mobile app.
+  description: 'The AskNicely in-app survey flow is a three-step process for displaying a survey inside your own web or mobile surface rather than by email or SMS. Your server generates a one-time HMAC-SHA256 `email_hash` of the contact''s email using your account secret key, posts it here to negotiate a survey slug, and then uses that slug to render the survey to the user. This endpoint sits outside the `/api/v1` REST surface and is authenticated by the email hash rather than by the `X-apikey` header.
+
+
+    Transcribed by API Evangelist from AskNicely''s published in-app survey reference at https://demo.asknice.ly/help/apidocs/inapp. AskNicely publishes no OpenAPI of its own.'
+  contact:
+    name: AskNicely Support
+    email: support@asknice.ly
+    url: https://asknicely.zendesk.com/hc/en-us
+  x-source: https://demo.asknice.ly/help/apidocs/inapp
+  x-generated-by: API Evangelist enrichment pipeline
+servers:
+- url: https://{domain}.asknice.ly
+  description: Per-tenant AskNicely host.
+  variables:
+    domain:
+      default: demo
+      description: Your AskNicely account subdomain.
+tags:
+- name: In-App Surveys
+  description: Server-to-server negotiation of an in-app survey slug.
+paths:
+  /service/inapp.php:
+    post:
+      operationId: requestSurveySlug
+      tags:
+      - In-App Surveys
+      summary: Request an in-app survey slug
+      description: Exchanges a signed contact identity for a survey slug. Survey slugs identify who is receiving the survey and record their responses. The `email_hash` is an HMAC-SHA256 of the contact's email address keyed with your account secret key (available in-platform); AskNicely publishes PHP, Ruby, Python, Java and C# examples for producing it, plus a hash verification tool on the docs page.
+      x-source: https://demo.asknice.ly/help/apidocs/inapp
+      parameters:
+      - name: id
+        in: query
+        required: true
+        description: A single-use, dash-free, 16-character UUID that prevents duplicate submissions.
+        schema:
+          type: string
+          maxLength: 16
+        example: 2ee42628423611ed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurveySlugRequest'
+            example:
+              domain_key: DEMO
+              template_name: default
+              name: Erwin Schrodinger
+              email: schrodinger@example.com
+              email_hash: df462ce404bbae11bd4e5860682db02e86ccace29b1a4d631dc7fbe075e321c5
+              created: '1418350105'
+              force: true
+              a_custom_property: Sample String
+      responses:
+        '200':
+          description: A survey slug that can be used to render the survey to the user.
+components:
+  schemas:
+    SurveySlugRequest:
+      type: object
+      required:
+      - domain_key
+      - template_name
+      - name
+      - email
+      - email_hash
+      - created
+      description: Any number of additional custom properties beyond those listed are supported.
+      properties:
+        domain_key:
+          type: string
+          description: The domain you signed up to AskNicely with.
+        template_name:
+          type: string
+          description: The name of the survey template to use.
+        name:
+          type: string
+          description: The name of the person being surveyed.
+        email:
+          type: string
+          format: email
+          description: The email address of the person being surveyed.
+        email_hash:
+          type: string
+          description: HMAC-SHA256 hex digest of the contact's email address, keyed with your account secret key.
+        created:
+          type: string
+          description: Unix timestamp (seconds since 01/01/1970) of when this customer joined your service.
+        force:
+          type: boolean
+          description: Force the survey and ignore contact rules. Intended for development testing only; it prevents the survey from triggering workflows and must not be used in production.
+      additionalProperties: true

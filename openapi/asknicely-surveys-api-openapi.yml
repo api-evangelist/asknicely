@@ -1,0 +1,323 @@
+openapi: 3.2.0
+info:
+  title: AskNicely Surveys API
+  version: v1
+  summary: Contact, survey-trigger, response, statistics and privacy operations for the AskNicely customer-experience (NPS/CSAT/5-Star) platform.
+  description: 'The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).
+
+
+    This document was assembled by API Evangelist from AskNicely''s own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.'
+  termsOfService: https://www.asknicely.com/terms
+  contact:
+    name: AskNicely Support
+    email: support@asknice.ly
+    url: https://asknicely.zendesk.com/hc/en-us
+  x-source: https://demo.asknice.ly/help/apidocs
+  x-generated-by: API Evangelist enrichment pipeline
+servers:
+- url: https://{domain}.asknice.ly/api/v1
+  description: Per-tenant AskNicely API host. Replace {domain} with your AskNicely subdomain.
+  variables:
+    domain:
+      default: demo
+      description: Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).
+security:
+- apiKeyAuth: []
+tags:
+- name: Surveys
+  description: Trigger NPS/CSAT/5-Star surveys to contacts.
+paths:
+  /contact/trigger:
+    post:
+      operationId: triggerSurvey
+      tags:
+      - Surveys
+      summary: Import a contact and trigger a survey
+      description: Adds or updates a single contact and, subject to the first Global Contact Rule configured on the Send page, sends them a survey. Contacts whose address is on the Blocklist are not imported. Multi-value custom fields are not supported here — use the bulk endpoint. A separate, lower rate limit applies to this operation (100 req/10s, 500 req/60s).
+      x-source: https://demo.asknice.ly/help/apidocs/survey
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TriggerSurveyRequest'
+      responses:
+        '200':
+          description: Request accepted. `survey_sent` indicates whether a survey was actually delivered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerSurveyResponse'
+              examples:
+                sent:
+                  summary: Successfully sent
+                  value:
+                    result:
+                    - survey_sent: true
+                      id: '15968'
+                      email: schrodinger@example.com
+                      msg: Message Sent
+                    success: true
+                    surveys_sent: 1
+                suppressedByContactRules:
+                  summary: Contact already surveyed within the contact-rule window
+                  value:
+                    result:
+                    - survey_sent: false
+                      id: '15968'
+                      email: schrodinger@example.com
+                      msg: You have already contacted this contact within the period of your contact rules, this request will be ignored. Add parameter '&triggeremail=true' to override contract rules and trigger this survey.
+                    success: true
+                    surveys_sent: 0
+                unsubscribed:
+                  summary: Contact is inactive or unsubscribed
+                  value:
+                    result:
+                    - survey_sent: false
+                      id: '15968'
+                      email: schrodinger@example.com
+                      msg: This contact has been de-activated or has un-subscribed, your survey will not be sent
+                    success: true
+                    surveys_sent: 0
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+  /contacts/add:
+    post:
+      operationId: bulkAddContacts
+      tags:
+      - Surveys
+      summary: Bulk add or update contacts, optionally triggering surveys
+      description: 'Asynchronous bulk import. Accepts a JSON body with a top-level `contacts` array; each contact requires `email` and may carry `name`, `segment` and any number of custom data fields (suffix `_c`), including multi-value arrays. Setting `"obeyrules": true` triggers surveys for eligible contacts under the Global Contact Rules. Payload limit is 6MB. Valid payloads return HTTP 201 immediately and are processed asynchronously — no per-contact result is returned.'
+      x-source: https://demo.asknice.ly/help/apidocs/bulkasync
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkAddRequest'
+            examples:
+              addAndSend:
+                summary: Bulk add/update and trigger surveys
+                value:
+                  contacts:
+                  - name: Jane Doe
+                    email: jane@example.com
+                    region: West
+                    account_owner: Sarah
+                  - name: John Smith
+                    email: john@example.com
+                    region: East
+                    account_owner: Tom
+                  obeyrules: true
+      responses:
+        '201':
+          description: Successfully added/updated; processing continues asynchronously.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+        '400':
+          description: Contacts data missing, malformed JSON, or `contacts` is not an array.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              examples:
+                noData:
+                  value:
+                    success: false
+                    msg: no data found
+                malformed:
+                  value:
+                    success: false
+                    msg: Errors found in json - Syntax error, malformed JSON
+                notAnArray:
+                  value:
+                    success: false
+                    msg: if set, contacts must be an array
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          description: Internal server error, or the request body exceeded 6MB.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              example:
+                success: false
+                msg: Internal Server Error
+components:
+  schemas:
+    RateLimitError:
+      allOf:
+      - $ref: '#/components/schemas/ErrorEnvelope'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Which window was exceeded, e.g. req-10s or req-60s.
+          count:
+            type: integer
+            description: Requests made in the window.
+          limit:
+            type: integer
+            description: Requests permitted in the window.
+    TriggerSurveyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        surveys_sent:
+          type: integer
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              survey_sent:
+                type: boolean
+              id:
+                type: string
+                description: The AskNicely contact id created or updated.
+              email:
+                type: string
+                format: email
+              msg:
+                type: string
+    BulkContact:
+      type: object
+      required:
+      - email
+      description: Additional properties are custom data fields (suffix `_c`), and may carry an array of values for multi-value fields.
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        segment:
+          type: string
+      additionalProperties: true
+    SuccessEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+      required:
+      - success
+    TriggerSurveyRequest:
+      type: object
+      required:
+      - email
+      description: Any additional properties are treated as custom data fields. AskNicely recommends suffixing custom field names with `_c` (snake_case) to avoid collisions with reserved names.
+      properties:
+        email:
+          type: string
+          format: email
+          description: Contact email address.
+        name:
+          type: string
+          description: Full name. Alternatively send firstname and lastname.
+        firstname:
+          type: string
+        lastname:
+          type: string
+        addcontact:
+          type: boolean
+          description: When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.
+        delayminutes:
+          type: integer
+          description: Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.
+        triggeremail:
+          type: boolean
+          description: When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.
+        thendeactivate:
+          type: boolean
+          description: Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.
+        segment:
+          type: string
+          description: The contact's segment.
+      additionalProperties: true
+    ErrorEnvelope:
+      type: object
+      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
+      properties:
+        success:
+          type: boolean
+          const: false
+        msg:
+          type: string
+          description: Human-readable error message.
+      required:
+      - success
+      - msg
+    BulkAddRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          description: The contacts to add or update.
+          items:
+            $ref: '#/components/schemas/BulkContact'
+        obeyrules:
+          type: boolean
+          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: We could not find the api key, or it was not set []
+    RateLimited:
+      description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+        RateLimit-Req10s-Limit:
+          description: Requests permitted in the rolling 10-second window.
+          schema:
+            type: integer
+        RateLimit-Req10s-Remaining:
+          description: Requests remaining in the rolling 10-second window.
+          schema:
+            type: integer
+        RateLimit-Req60s-Limit:
+          description: Requests permitted in the rolling 60-second window.
+          schema:
+            type: integer
+        RateLimit-Req60s-Remaining:
+          description: Requests remaining in the rolling 60-second window.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitError'
+          example:
+            success: false
+            msg: 'Rate limit hit: reduce the rate of requests and retry'
+            type: req-10s
+            count: 201
+            limit: 200
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-apikey
+      description: The account API key, found in-platform under Settings > API. Every AskNicely user is issued their own key; create a separate user to isolate API traffic. Sending an invalid or missing key returns HTTP 401.

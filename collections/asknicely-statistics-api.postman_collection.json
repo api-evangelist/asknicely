@@ -1,0 +1,1070 @@
+{
+  "item": [
+    {
+      "id": "88bf0324-fbe6-4fe0-a03f-557a8bc2b4b6",
+      "name": "Statistics",
+      "description": {
+        "content": "NPS, sent and historical survey statistics.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "d61b9029-0f24-4cb3-8760-596df0c8feb7",
+          "name": "Get the current NPS score",
+          "request": {
+            "name": "Get the current NPS score",
+            "description": {
+              "content": "Returns the account's Net Promoter Score over a rolling window. Optional `filters[]`/`values[]` query pairs restrict the calculation to matching custom data field values.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "getnps",
+                ":days"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "filters[]",
+                  "value": "<string>",
+                  "description": "Custom data field to filter on (repeatable, positionally paired with `values[]`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "filters[]",
+                  "value": "<string>",
+                  "description": "Custom data field to filter on (repeatable, positionally paired with `values[]`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "values[]",
+                  "value": "<string>",
+                  "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+                },
+                {
+                  "disabled": false,
+                  "key": "values[]",
+                  "value": "<string>",
+                  "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "30",
+                  "key": "days",
+                  "description": "(Required) Number of days back from today to calculate NPS over. Default is 30."
+                },
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3593bc7d-4fcc-4045-8cf4-66465b3deb85",
+              "name": "The NPS score for the window.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "getnps",
+                    ":days"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "30",
+                      "key": "days",
+                      "description": "(Required) Number of days back from today to calculate NPS over. Default is 30."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"NPS\": \"64.5\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "190be331-0db8-4262-9210-f6569a8cadb9",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "getnps",
+                    ":days"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "30",
+                      "key": "days",
+                      "description": "(Required) Number of days back from today to calculate NPS over. Default is 30."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "460bb1f6-2b73-4044-929b-9fc6421b443a",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "getnps",
+                    ":days"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "30",
+                      "key": "days",
+                      "description": "(Required) Number of days back from today to calculate NPS over. Default is 30."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "6609"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a4ba04dd-6585-4c5a-9e8b-6c7561a563cd",
+          "name": "Get sent-survey statistics",
+          "request": {
+            "name": "Get sent-survey statistics",
+            "description": {
+              "content": "Returns delivery and response statistics for surveys sent in the window. The published path template also accepts two optional trailing segments — `/{field}/{value}` — to filter on a single custom property, or on `question_type` with values `NPS`, `CSAT` or `FIVESTAR`. Multiple properties can be filtered with repeatable `filters[]`/`values[]` query pairs.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sentstats",
+                ":days"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "filters[]",
+                  "value": "<string>",
+                  "description": "Custom data field to filter on (repeatable, positionally paired with `values[]`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "filters[]",
+                  "value": "<string>",
+                  "description": "Custom data field to filter on (repeatable, positionally paired with `values[]`)."
+                },
+                {
+                  "disabled": false,
+                  "key": "values[]",
+                  "value": "<string>",
+                  "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+                },
+                {
+                  "disabled": false,
+                  "key": "values[]",
+                  "value": "<string>",
+                  "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "30",
+                  "key": "days",
+                  "description": "(Required) Number of days back from today for surveys sent. Default is 30."
+                },
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "56058555-022b-4a77-a99d-7d28b611fa4b",
+              "name": "Sent-survey statistics for the window.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sentstats",
+                    ":days"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "30",
+                      "key": "days",
+                      "description": "(Required) Number of days back from today for surveys sent. Default is 30."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"sent\": 6,\n  \"delivered\": 6,\n  \"opened\": 3,\n  \"responded\": 2,\n  \"promoters\": 0,\n  \"passives\": 0,\n  \"detractors\": 2,\n  \"responserate\": \"33.3%\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ffcf6817-a3f9-4721-b483-28094e0c812d",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sentstats",
+                    ":days"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "30",
+                      "key": "days",
+                      "description": "(Required) Number of days back from today for surveys sent. Default is 30."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e26df543-de29-4651-911c-503b4f9a9009",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sentstats",
+                    ":days"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "filters[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "values[]",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "30",
+                      "key": "days",
+                      "description": "(Required) Number of days back from today for surveys sent. Default is 30."
+                    },
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "6609"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bcf12259-e1c2-4b70-8a08-aac85b5896d8",
+          "name": "Get historical survey statistics",
+          "request": {
+            "name": "Get historical survey statistics",
+            "description": {
+              "content": "Returns day-by-day historical sending, delivery, open, response and score statistics.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "stats"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "year",
+                  "value": "<integer>",
+                  "description": "Year to get stats for."
+                },
+                {
+                  "disabled": false,
+                  "key": "month",
+                  "value": "<integer>",
+                  "description": "Month to get stats for."
+                },
+                {
+                  "disabled": false,
+                  "key": "day",
+                  "value": "<integer>",
+                  "description": "Day to get stats for."
+                },
+                {
+                  "disabled": false,
+                  "key": "segment",
+                  "value": "<string>",
+                  "description": "Restrict stats to this segment only."
+                },
+                {
+                  "disabled": false,
+                  "key": "start_time",
+                  "value": "<integer>",
+                  "description": "Unix timestamp for all responses sent at or after this time."
+                },
+                {
+                  "disabled": false,
+                  "key": "end_time",
+                  "value": "<integer>",
+                  "description": "Unix timestamp for all responses sent at or before this time."
+                },
+                {
+                  "disabled": false,
+                  "key": "include-delay",
+                  "value": "<string>",
+                  "description": "Offset the date by `delayminutes`."
+                }
+              ],
+              "variable": [
+                {
+                  "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                  "type": "any",
+                  "value": "{{domain}}",
+                  "key": "domain"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7b7bbe1a-0f5d-4cd7-b5e7-67deffc4cb16",
+              "name": "Historical statistics rows.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "month",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "day",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "segment",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "start_time",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "include-delay",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"year\": \"2023\",\n      \"month\": \"8\",\n      \"day\": \"16\",\n      \"weekday\": \"Thu\",\n      \"sent\": \"5\",\n      \"delivered\": \"5\",\n      \"opened\": \"3\",\n      \"responded\": \"2\",\n      \"promoters\": \"1\",\n      \"passives\": \"1\",\n      \"detractors\": \"0\",\n      \"nps\": \"50.0\",\n      \"fivestar\": null,\n      \"csat\": null,\n      \"comment_length\": \"68\",\n      \"comment_responded_percent\": \"100.0\",\n      \"surveys_responded_percent\": \"40.0\",\n      \"surveys_opened_responded_percent\": \"66.7\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "60453c33-02c5-47cf-9480-7e2fc4ea8e19",
+              "name": "Missing or invalid API key.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "month",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "day",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "segment",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "start_time",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "include-delay",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"We could not find the api key, or it was not set []\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5773ff9e-ae4b-426e-8160-e4f79ffd47f4",
+              "name": "Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "stats"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "month",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "day",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "segment",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "start_time",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "end_time",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "include-delay",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "description": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+                      "type": "any",
+                      "value": "{{domain}}",
+                      "key": "domain"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-apikey",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "header": [
+                {
+                  "disabled": false,
+                  "description": "Seconds to wait before retrying.",
+                  "key": "Retry-After",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Limit",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 10-second window.",
+                  "key": "RateLimit-Req10s-Remaining",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests permitted in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Limit",
+                  "value": "6609"
+                },
+                {
+                  "disabled": false,
+                  "description": "Requests remaining in the rolling 60-second window.",
+                  "key": "RateLimit-Req60s-Remaining",
+                  "value": "6609"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"msg\": \"Rate limit hit: reduce the rate of requests and retry\",\n  \"type\": \"req-10s\",\n  \"count\": 201,\n  \"limit\": 200\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Your AskNicely account subdomain (the value in https://{domain}.asknice.ly).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "demo",
+      "key": "domain"
+    },
+    {
+      "type": "string",
+      "value": "https://{{domain}}.asknice.ly/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-apikey"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ed1b623e-62f4-4ed3-b528-f4967fdc57bc",
+    "name": "AskNicely Statistics API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).\n\nThis document was assembled by API Evangelist from AskNicely's own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.\n\nContact Support:\n Name: AskNicely Support\n Email: support@asknice.ly",
+      "type": "text/plain"
+    }
+  }
+}

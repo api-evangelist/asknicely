@@ -1,0 +1,87 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "AskNicely Responses API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-apikey",
+      "value": "{{X-apikey}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Responses",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get survey responses",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{domain}.asknice.ly/api/v1/responses/:sortDirection/:pagesize/:pagenumber/:sinceTime/:format",
+            "params": [
+              {
+                "name": "sortDirection",
+                "value": "",
+                "type": "path",
+                "description": "Sort direction. Defaults to `asc`."
+              },
+              {
+                "name": "pagesize",
+                "value": "",
+                "type": "path",
+                "description": "Rows per request. Default and maximum are both 50,000."
+              },
+              {
+                "name": "pagenumber",
+                "value": "",
+                "type": "path",
+                "description": "Current page, starting at 1."
+              },
+              {
+                "name": "sinceTime",
+                "value": "",
+                "type": "path",
+                "description": "Unix timestamp; return responses at or after this time."
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "path",
+                "description": "Response format."
+              },
+              {
+                "name": "includestatustime",
+                "value": "",
+                "type": "query",
+                "description": "Set to `yes` to also return the unix-timestamp `case_closed_time` for each response."
+              },
+              {
+                "name": "filters[]",
+                "value": "",
+                "type": "query",
+                "description": "Custom data field to filter on (repeatable). Must be paired positionally with `values[]`; the number and order of filters and values must match."
+              },
+              {
+                "name": "values[]",
+                "value": "",
+                "type": "query",
+                "description": "Value for the correspondingly-positioned `filters[]` entry (repeatable)."
+              }
+            ]
+          },
+          "docs": "Retrieves detailed survey responses. Up to 50,000 responses may be requested per call; make multiple calls to page through more. Requests above the redirect threshold are redirected to a temporary file on S3, so the calling client MUST follow redirects. The published path template also accepts three further optional trailing segments — `/{filter}/{sort_by}/{end_time}` — where `filter` is one of `answered`, `raw` or `published`, `sort_by` is `sent` or `responded`, and `end_time` is a unix timesta"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

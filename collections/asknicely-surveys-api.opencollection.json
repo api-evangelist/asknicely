@@ -1,0 +1,56 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "AskNicely Surveys API",
+    "version": "v1"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-apikey",
+      "value": "{{X-apikey}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Surveys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Import a contact and trigger a survey",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/contact/trigger",
+            "body": {
+              "type": "form-urlencoded",
+              "data": []
+            }
+          },
+          "docs": "Adds or updates a single contact and, subject to the first Global Contact Rule configured on the Send page, sends them a survey. Contacts whose address is on the Blocklist are not imported. Multi-value custom fields are not supported here — use the bulk endpoint. A separate, lower rate limit applies to this operation (100 req/10s, 500 req/60s)."
+        },
+        {
+          "info": {
+            "name": "Bulk add or update contacts, optionally triggering surveys",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{domain}.asknice.ly/api/v1/contacts/add",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Asynchronous bulk import. Accepts a JSON body with a top-level `contacts` array; each contact requires `email` and may carry `name`, `segment` and any number of custom data fields (suffix `_c`), including multi-value arrays. Setting `\"obeyrules\": true` triggers surveys for eligible contacts under the Global Contact Rules. Payload limit is 6MB. Valid payloads return HTTP 201 immediately and are processed asynchronously — no per-contact result is returned."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
