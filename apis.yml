@@ -10,6 +10,18 @@ description: >-
   contact import, survey triggering, response and statistics retrieval, unsubscribe lists and GDPR
   erasure, authenticated with a single `X-apikey` header, and it ships a per-tenant remote MCP server for
   its Ask NiceAI assistant.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://cdn.prod.website-files.com/5e55a51f5f18f823ee05f445/5ec34b022aca806dce613ba4_AN_logo_white.png
 url: https://raw.githubusercontent.com/api-evangelist/asknicely/refs/heads/main/apis.yml
 x-type: company
