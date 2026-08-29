@@ -240,6 +240,9 @@ apis:
   - type: SourceCode
     url: https://github.com/asknicely/asknicely-mobile-inapp-samples
 common:
+- type: CapabilityMap
+  url: capabilities/asknicely-capability-edges.yml
+  name: AskNicely Business Capability Map
 - type: Overlay
   url: overlays/asknicely-openapi-overlay.yaml
 - type: TrustCenter

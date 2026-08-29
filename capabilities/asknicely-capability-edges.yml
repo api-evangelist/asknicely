@@ -1,0 +1,52 @@
+slug: asknicely
+provider: AskNicely
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Telecommunications
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 4
+edges:
+- tag: Responses
+  spec_file: asknicely-responses-api-openapi.yml
+  capability_id: BC-430.50
+  capability_id_l1: BC-430
+  capability_name: Customer Feedback Management
+  confidence: 0.88
+  evidence: GET /responses/... 'Get survey responses'; schemas SurveyResponse, ResponsesEnvelope
+  reason: Retrieval of NPS/CSAT survey responses is squarely customer feedback management (surveys, NPS,
+    voice-of-customer).
+- tag: Surveys
+  spec_file: asknicely-surveys-api-openapi.yml
+  capability_id: BC-430.50
+  capability_id_l1: BC-430
+  capability_name: Customer Feedback Management
+  confidence: 0.85
+  evidence: POST /contact/trigger 'Import a contact and trigger a survey'
+  reason: Triggering NPS/CSAT/5-Star surveys to contacts is the execution of a survey / voice-of-customer
+    programme.
+- tag: Statistics
+  spec_file: asknicely-statistics-api-openapi.yml
+  capability_id: BC-430.50
+  capability_id_l1: BC-430
+  capability_name: Customer Feedback Management
+  confidence: 0.82
+  evidence: GET /getnps/{days} 'Get the current NPS score'; GET /sentstats/{days} 'Get sent-survey statistics'
+  reason: Aggregated NPS and survey-send statistics are reporting on the voice-of-customer programme,
+    i.e. Customer Feedback Management rather than generic BI.
+- tag: In-App Surveys
+  spec_file: asknicely-in-app-surveys-api-openapi.yml
+  capability_id: BC-430.50
+  capability_id_l1: BC-430
+  capability_name: Customer Feedback Management
+  confidence: 0.72
+  evidence: '''The AskNicely in-app survey flow is a three-step process for displaying a survey inside
+    your own web or mobile surface''; POST /service/inapp.php ''Request an in-app survey slug'''
+  reason: Endpoint negotiates delivery of an NPS/CSAT survey to a customer in-app — survey/voice-of-customer
+    programme execution. Slightly technical (hash-based slug negotiation) so not maximal confidence.
