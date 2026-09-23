@@ -3,10 +3,7 @@ info:
   title: AskNicely In-App Survey In-App Surveys API
   version: v1
   summary: Negotiate a one-time survey slug so an NPS/CSAT/5-Star survey can be rendered inside a website or mobile app.
-  description: 'The AskNicely in-app survey flow is a three-step process for displaying a survey inside your own web or mobile surface rather than by email or SMS. Your server generates a one-time HMAC-SHA256 `email_hash` of the contact''s email using your account secret key, posts it here to negotiate a survey slug, and then uses that slug to render the survey to the user. This endpoint sits outside the `/api/v1` REST surface and is authenticated by the email hash rather than by the `X-apikey` header.
-
-
-    Transcribed by API Evangelist from AskNicely''s published in-app survey reference at https://demo.asknice.ly/help/apidocs/inapp. AskNicely publishes no OpenAPI of its own.'
+  description: The AskNicely in-app survey flow is a three-step process for displaying a survey inside your own web or mobile surface rather than by email or SMS.
   contact:
     name: AskNicely Support
     email: support@asknice.ly

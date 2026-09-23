@@ -3,10 +3,7 @@ info:
   title: AskNicely Contacts API
   version: v1
   summary: Contact, survey-trigger, response, statistics and privacy operations for the AskNicely customer-experience (NPS/CSAT/5-Star) platform.
-  description: 'The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests. Every AskNicely account is provisioned its own subdomain (`https://{domain}.asknice.ly`) and the API is served from that tenant host under `/api/v1`. Authentication is a single account API key supplied in the `X-apikey` request header (per-user keys; create a new user to isolate API traffic).
-
-
-    This document was assembled by API Evangelist from AskNicely''s own public API reference at https://demo.asknice.ly/help/apidocs — one page per endpoint. Paths, methods, parameter names, examples and response bodies are transcribed from those pages; nothing has been invented. AskNicely does not publish an OpenAPI/Swagger document of its own.'
+  description: The AskNicely API is a RESTful, JSON-returning API for importing contacts, triggering NPS/CSAT/5-Star surveys, retrieving survey responses and statistics, and honouring privacy (GDPR) deletion requests.
   termsOfService: https://www.asknicely.com/terms
   contact:
     name: AskNicely Support
@@ -387,51 +384,6 @@ paths:
           $ref: '#/components/responses/RateLimited'
 components:
   schemas:
-    RateLimitError:
-      allOf:
-      - $ref: '#/components/schemas/ErrorEnvelope'
-      - type: object
-        properties:
-          type:
-            type: string
-            description: Which window was exceeded, e.g. req-10s or req-60s.
-          count:
-            type: integer
-            description: Requests made in the window.
-          limit:
-            type: integer
-            description: Requests permitted in the window.
-    TriggerSurveyResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        surveys_sent:
-          type: integer
-        result:
-          type: array
-          items:
-            type: object
-            properties:
-              survey_sent:
-                type: boolean
-              id:
-                type: string
-                description: The AskNicely contact id created or updated.
-              email:
-                type: string
-                format: email
-              msg:
-                type: string
-    UnsubscribedEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/UnsubscribedContact'
     BulkContact:
       type: object
       required:
@@ -482,24 +434,6 @@ components:
           description: Unix timestamp of unsubscribe
           or null.: null
       additionalProperties: true
-    SuccessEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        msg:
-          type: string
-      required:
-      - success
-    ContactRemovedEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        msg:
-          type: string
-        data:
-          $ref: '#/components/schemas/Contact'
     UnsubscribedContact:
       type: object
       properties:
@@ -512,19 +446,6 @@ components:
         unsubscribetime:
           type: string
           description: Unix timestamp.
-    ErrorEnvelope:
-      type: object
-      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
-      properties:
-        success:
-          type: boolean
-          const: false
-        msg:
-          type: string
-          description: Human-readable error message.
-      required:
-      - success
-      - msg
     TriggerSurveyRequest:
       type: object
       required:
@@ -558,26 +479,6 @@ components:
           type: string
           description: The contact's segment.
       additionalProperties: true
-    ContactEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        data:
-          $ref: '#/components/schemas/Contact'
-    BulkAddRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          description: The contacts to add or update.
-          items:
-            $ref: '#/components/schemas/BulkContact'
-        obeyrules:
-          type: boolean
-          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
     PrivacyRemoveRequest:
       type: object
       required:
@@ -593,34 +494,103 @@ components:
           type: integer
           default: 0
           description: Set to 1 to suppress notifying the primary AskNicely user about the removal.
-  parameters:
-    SearchKey:
-      name: key
-      in: path
-      required: true
-      description: The field to search by. Defaults to `email`; may be `id` or any custom property set via the API.
-      schema:
-        type: string
-        default: email
-      example: email
-    Search:
-      name: search
-      in: path
-      required: true
-      description: URL-encoded value to search for, e.g. a contact's email address.
-      schema:
-        type: string
-      example: schrodinger%40example.com
+    SuccessEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+      required:
+      - success
+    ContactRemovedEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+        data:
+          $ref: '#/components/schemas/Contact'
+    TriggerSurveyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        surveys_sent:
+          type: integer
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              survey_sent:
+                type: boolean
+              id:
+                type: string
+                description: The AskNicely contact id created or updated.
+              email:
+                type: string
+                format: email
+              msg:
+                type: string
+    ContactEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Contact'
+    UnsubscribedEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnsubscribedContact'
+    RateLimitError:
+      allOf:
+      - $ref: '#/components/schemas/ErrorEnvelope'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Which window was exceeded, e.g. req-10s or req-60s.
+          count:
+            type: integer
+            description: Requests made in the window.
+          limit:
+            type: integer
+            description: Requests permitted in the window.
+    ErrorEnvelope:
+      type: object
+      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
+      properties:
+        success:
+          type: boolean
+          const: false
+        msg:
+          type: string
+          description: Human-readable error message.
+      required:
+      - success
+      - msg
+    BulkAddRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          description: The contacts to add or update.
+          items:
+            $ref: '#/components/schemas/BulkContact'
+        obeyrules:
+          type: boolean
+          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
   responses:
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
-          example:
-            success: false
-            msg: We could not find the api key, or it was not set []
     RateLimited:
       description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
       headers:
@@ -654,6 +624,33 @@ components:
             type: req-10s
             count: 201
             limit: 200
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: We could not find the api key, or it was not set []
+  parameters:
+    Search:
+      name: search
+      in: path
+      required: true
+      description: URL-encoded value to search for, e.g. a contact's email address.
+      schema:
+        type: string
+      example: schrodinger%40example.com
+    SearchKey:
+      name: key
+      in: path
+      required: true
+      description: The field to search by. Defaults to `email`; may be `id` or any custom property set via the API.
+      schema:
+        type: string
+        default: email
+      example: email
   securitySchemes:
     apiKeyAuth:
       type: apiKey
