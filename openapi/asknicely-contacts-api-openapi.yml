@@ -384,56 +384,6 @@ paths:
           $ref: '#/components/responses/RateLimited'
 components:
   schemas:
-    BulkContact:
-      type: object
-      required:
-      - email
-      description: Additional properties are custom data fields (suffix `_c`), and may carry an array of values for multi-value fields.
-      properties:
-        email:
-          type: string
-          format: email
-        name:
-          type: string
-        segment:
-          type: string
-      additionalProperties: true
-    Contact:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-        segment:
-          type: string
-        active:
-          type: string
-          description: '"1" when the contact is active.'
-        created:
-          type: string
-          description: Unix timestamp.
-        scheduled:
-          type: string
-        lastemailed:
-          type: string
-          description: Unix timestamp.
-        importedattime:
-          type: string
-          description: Unix timestamp.
-        source:
-          type: string
-          description: Where the contact came from, e.g. an integration name.
-        unsubscribetime:
-          type:
-          - string
-          - 'null'
-          description: Unix timestamp of unsubscribe
-          or null.: null
-      additionalProperties: true
     UnsubscribedContact:
       type: object
       properties:
@@ -479,30 +429,6 @@ components:
           type: string
           description: The contact's segment.
       additionalProperties: true
-    PrivacyRemoveRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          description: Email addresses of the contacts to erase.
-          items:
-            type: string
-            format: email
-        skipnotify:
-          type: integer
-          default: 0
-          description: Set to 1 to suppress notifying the primary AskNicely user about the removal.
-    SuccessEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        msg:
-          type: string
-      required:
-      - success
     ContactRemovedEnvelope:
       type: object
       properties:
@@ -512,6 +438,94 @@ components:
           type: string
         data:
           $ref: '#/components/schemas/Contact'
+    SuccessEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+      required:
+      - success
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        segment:
+          type: string
+        active:
+          type: string
+          description: '"1" when the contact is active.'
+        created:
+          type: string
+          description: Unix timestamp.
+        scheduled:
+          type: string
+        lastemailed:
+          type: string
+          description: Unix timestamp.
+        importedattime:
+          type: string
+          description: Unix timestamp.
+        source:
+          type: string
+          description: Where the contact came from, e.g. an integration name.
+        unsubscribetime:
+          type:
+          - string
+          - 'null'
+          description: Unix timestamp of unsubscribe
+          or null.: null
+      additionalProperties: true
+    BulkAddRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          description: The contacts to add or update.
+          items:
+            $ref: '#/components/schemas/BulkContact'
+        obeyrules:
+          type: boolean
+          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
+    UnsubscribedEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnsubscribedContact'
+    ContactEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Contact'
+    BulkContact:
+      type: object
+      required:
+      - email
+      description: Additional properties are custom data fields (suffix `_c`), and may carry an array of values for multi-value fields.
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        segment:
+          type: string
+      additionalProperties: true
     TriggerSurveyResponse:
       type: object
       properties:
@@ -534,22 +548,6 @@ components:
                 format: email
               msg:
                 type: string
-    ContactEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        data:
-          $ref: '#/components/schemas/Contact'
-    UnsubscribedEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/UnsubscribedContact'
     RateLimitError:
       allOf:
       - $ref: '#/components/schemas/ErrorEnvelope'
@@ -564,6 +562,21 @@ components:
           limit:
             type: integer
             description: Requests permitted in the window.
+    PrivacyRemoveRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          description: Email addresses of the contacts to erase.
+          items:
+            type: string
+            format: email
+        skipnotify:
+          type: integer
+          default: 0
+          description: Set to 1 to suppress notifying the primary AskNicely user about the removal.
     ErrorEnvelope:
       type: object
       description: The AskNicely error envelope. Not RFC 9457 Problem Details.
@@ -577,20 +590,16 @@ components:
       required:
       - success
       - msg
-    BulkAddRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          description: The contacts to add or update.
-          items:
-            $ref: '#/components/schemas/BulkContact'
-        obeyrules:
-          type: boolean
-          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
   responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: We could not find the api key, or it was not set []
     RateLimited:
       description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
       headers:
@@ -624,24 +633,7 @@ components:
             type: req-10s
             count: 201
             limit: 200
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
-          example:
-            success: false
-            msg: We could not find the api key, or it was not set []
   parameters:
-    Search:
-      name: search
-      in: path
-      required: true
-      description: URL-encoded value to search for, e.g. a contact's email address.
-      schema:
-        type: string
-      example: schrodinger%40example.com
     SearchKey:
       name: key
       in: path
@@ -651,6 +643,14 @@ components:
         type: string
         default: email
       example: email
+    Search:
+      name: search
+      in: path
+      required: true
+      description: URL-encoded value to search for, e.g. a contact's email address.
+      schema:
+        type: string
+      example: schrodinger%40example.com
   securitySchemes:
     apiKeyAuth:
       type: apiKey

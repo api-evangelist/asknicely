@@ -145,64 +145,7 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimited'
 components:
-  responses:
-    RateLimited:
-      description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
-      headers:
-        Retry-After:
-          description: Seconds to wait before retrying.
-          schema:
-            type: integer
-        RateLimit-Req10s-Limit:
-          description: Requests permitted in the rolling 10-second window.
-          schema:
-            type: integer
-        RateLimit-Req10s-Remaining:
-          description: Requests remaining in the rolling 10-second window.
-          schema:
-            type: integer
-        RateLimit-Req60s-Limit:
-          description: Requests permitted in the rolling 60-second window.
-          schema:
-            type: integer
-        RateLimit-Req60s-Remaining:
-          description: Requests remaining in the rolling 60-second window.
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RateLimitError'
-          example:
-            success: false
-            msg: 'Rate limit hit: reduce the rate of requests and retry'
-            type: req-10s
-            count: 201
-            limit: 200
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
-          example:
-            success: false
-            msg: We could not find the api key, or it was not set []
   schemas:
-    RateLimitError:
-      allOf:
-      - $ref: '#/components/schemas/ErrorEnvelope'
-      - type: object
-        properties:
-          type:
-            type: string
-            description: Which window was exceeded, e.g. req-10s or req-60s.
-          count:
-            type: integer
-            description: Requests made in the window.
-          limit:
-            type: integer
-            description: Requests permitted in the window.
     ResponsesEnvelope:
       type: object
       properties:
@@ -224,6 +167,33 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SurveyResponse'
+    RateLimitError:
+      allOf:
+      - $ref: '#/components/schemas/ErrorEnvelope'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Which window was exceeded, e.g. req-10s or req-60s.
+          count:
+            type: integer
+            description: Requests made in the window.
+          limit:
+            type: integer
+            description: Requests permitted in the window.
+    ErrorEnvelope:
+      type: object
+      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
+      properties:
+        success:
+          type: boolean
+          const: false
+        msg:
+          type: string
+          description: Human-readable error message.
+      required:
+      - success
+      - msg
     SurveyResponse:
       type: object
       properties:
@@ -286,19 +256,49 @@ components:
           type: string
           description: Returned when includestatustime=yes.
       additionalProperties: true
-    ErrorEnvelope:
-      type: object
-      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
-      properties:
-        success:
-          type: boolean
-          const: false
-        msg:
-          type: string
-          description: Human-readable error message.
-      required:
-      - success
-      - msg
+  responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: We could not find the api key, or it was not set []
+    RateLimited:
+      description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+        RateLimit-Req10s-Limit:
+          description: Requests permitted in the rolling 10-second window.
+          schema:
+            type: integer
+        RateLimit-Req10s-Remaining:
+          description: Requests remaining in the rolling 10-second window.
+          schema:
+            type: integer
+        RateLimit-Req60s-Limit:
+          description: Requests permitted in the rolling 60-second window.
+          schema:
+            type: integer
+        RateLimit-Req60s-Remaining:
+          description: Requests remaining in the rolling 60-second window.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RateLimitError'
+          example:
+            success: false
+            msg: 'Rate limit hit: reduce the rate of requests and retry'
+            type: req-10s
+            count: 201
+            limit: 200
   securitySchemes:
     apiKeyAuth:
       type: apiKey
