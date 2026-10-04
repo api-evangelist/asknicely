@@ -239,31 +239,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HistoricalStatsRow'
-    SentStats:
-      type: object
-      properties:
-        sent:
-          type: integer
-        delivered:
-          type: integer
-        opened:
-          type: integer
-        responded:
-          type: integer
-        promoters:
-          type: integer
-        passives:
-          type: integer
-        detractors:
-          type: integer
-        responserate:
-          type: string
-    NpsResult:
-      type: object
-      properties:
-        NPS:
-          type: string
-          description: The Net Promoter Score for the window.
+    RateLimitError:
+      allOf:
+      - $ref: '#/components/schemas/ErrorEnvelope'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Which window was exceeded, e.g. req-10s or req-60s.
+          count:
+            type: integer
+            description: Requests made in the window.
+          limit:
+            type: integer
+            description: Requests permitted in the window.
     HistoricalStatsRow:
       type: object
       properties:
@@ -307,21 +296,41 @@ components:
           type: string
         surveys_opened_responded_percent:
           type: string
-    RateLimitError:
-      allOf:
-      - $ref: '#/components/schemas/ErrorEnvelope'
-      - type: object
-        properties:
-          type:
-            type: string
-            description: Which window was exceeded, e.g. req-10s or req-60s.
-          count:
-            type: integer
-            description: Requests made in the window.
-          limit:
-            type: integer
-            description: Requests permitted in the window.
+    SentStats:
+      type: object
+      properties:
+        sent:
+          type: integer
+        delivered:
+          type: integer
+        opened:
+          type: integer
+        responded:
+          type: integer
+        promoters:
+          type: integer
+        passives:
+          type: integer
+        detractors:
+          type: integer
+        responserate:
+          type: string
+    NpsResult:
+      type: object
+      properties:
+        NPS:
+          type: string
+          description: The Net Promoter Score for the window.
   responses:
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            msg: We could not find the api key, or it was not set []
     RateLimited:
       description: Rate limit exceeded. `RateLimit-Req10s-*` and `RateLimit-Req60s-*` response headers report the current window, and `Retry-After` indicates when to retry.
       headers:
@@ -355,15 +364,6 @@ components:
             type: req-10s
             count: 201
             limit: 200
-    Unauthorized:
-      description: Missing or invalid API key.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorEnvelope'
-          example:
-            success: false
-            msg: We could not find the api key, or it was not set []
   securitySchemes:
     apiKeyAuth:
       type: apiKey
