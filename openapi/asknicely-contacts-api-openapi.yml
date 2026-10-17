@@ -383,213 +383,6 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimited'
 components:
-  schemas:
-    ErrorEnvelope:
-      type: object
-      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
-      properties:
-        success:
-          type: boolean
-          const: false
-        msg:
-          type: string
-          description: Human-readable error message.
-      required:
-      - success
-      - msg
-    TriggerSurveyRequest:
-      type: object
-      required:
-      - email
-      description: Any additional properties are treated as custom data fields. AskNicely recommends suffixing custom field names with `_c` (snake_case) to avoid collisions with reserved names.
-      properties:
-        email:
-          type: string
-          format: email
-          description: Contact email address.
-        name:
-          type: string
-          description: Full name. Alternatively send firstname and lastname.
-        firstname:
-          type: string
-        lastname:
-          type: string
-        addcontact:
-          type: boolean
-          description: When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.
-        delayminutes:
-          type: integer
-          description: Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.
-        triggeremail:
-          type: boolean
-          description: When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.
-        thendeactivate:
-          type: boolean
-          description: Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.
-        segment:
-          type: string
-          description: The contact's segment.
-      additionalProperties: true
-    SuccessEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        msg:
-          type: string
-      required:
-      - success
-    ContactRemovedEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        msg:
-          type: string
-        data:
-          $ref: '#/components/schemas/Contact'
-    ContactEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        data:
-          $ref: '#/components/schemas/Contact'
-    UnsubscribedEnvelope:
-      type: object
-      properties:
-        success:
-          type: boolean
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/UnsubscribedContact'
-    BulkAddRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          description: The contacts to add or update.
-          items:
-            $ref: '#/components/schemas/BulkContact'
-        obeyrules:
-          type: boolean
-          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
-    Contact:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-        segment:
-          type: string
-        active:
-          type: string
-          description: '"1" when the contact is active.'
-        created:
-          type: string
-          description: Unix timestamp.
-        scheduled:
-          type: string
-        lastemailed:
-          type: string
-          description: Unix timestamp.
-        importedattime:
-          type: string
-          description: Unix timestamp.
-        source:
-          type: string
-          description: Where the contact came from, e.g. an integration name.
-        unsubscribetime:
-          type:
-          - string
-          - 'null'
-          description: Unix timestamp of unsubscribe
-          or null.: null
-      additionalProperties: true
-    RateLimitError:
-      allOf:
-      - $ref: '#/components/schemas/ErrorEnvelope'
-      - type: object
-        properties:
-          type:
-            type: string
-            description: Which window was exceeded, e.g. req-10s or req-60s.
-          count:
-            type: integer
-            description: Requests made in the window.
-          limit:
-            type: integer
-            description: Requests permitted in the window.
-    TriggerSurveyResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-        surveys_sent:
-          type: integer
-        result:
-          type: array
-          items:
-            type: object
-            properties:
-              survey_sent:
-                type: boolean
-              id:
-                type: string
-                description: The AskNicely contact id created or updated.
-              email:
-                type: string
-                format: email
-              msg:
-                type: string
-    UnsubscribedContact:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The contact id.
-        email:
-          type: string
-          format: email
-        unsubscribetime:
-          type: string
-          description: Unix timestamp.
-    PrivacyRemoveRequest:
-      type: object
-      required:
-      - contacts
-      properties:
-        contacts:
-          type: array
-          description: Email addresses of the contacts to erase.
-          items:
-            type: string
-            format: email
-        skipnotify:
-          type: integer
-          default: 0
-          description: Set to 1 to suppress notifying the primary AskNicely user about the removal.
-    BulkContact:
-      type: object
-      required:
-      - email
-      description: Additional properties are custom data fields (suffix `_c`), and may carry an array of values for multi-value fields.
-      properties:
-        email:
-          type: string
-          format: email
-        name:
-          type: string
-        segment:
-          type: string
-      additionalProperties: true
   responses:
     Unauthorized:
       description: Missing or invalid API key.
@@ -633,6 +426,213 @@ components:
             type: req-10s
             count: 201
             limit: 200
+  schemas:
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        segment:
+          type: string
+        active:
+          type: string
+          description: '"1" when the contact is active.'
+        created:
+          type: string
+          description: Unix timestamp.
+        scheduled:
+          type: string
+        lastemailed:
+          type: string
+          description: Unix timestamp.
+        importedattime:
+          type: string
+          description: Unix timestamp.
+        source:
+          type: string
+          description: Where the contact came from, e.g. an integration name.
+        unsubscribetime:
+          type:
+          - string
+          - 'null'
+          description: Unix timestamp of unsubscribe
+          or null.: null
+      additionalProperties: true
+    BulkAddRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          description: The contacts to add or update.
+          items:
+            $ref: '#/components/schemas/BulkContact'
+        obeyrules:
+          type: boolean
+          description: Set to true to trigger surveys for eligible contacts under the Global Contact Rules. `false` is not a valid value — omit the property to import only.
+    ContactRemovedEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+        data:
+          $ref: '#/components/schemas/Contact'
+    TriggerSurveyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        surveys_sent:
+          type: integer
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              survey_sent:
+                type: boolean
+              id:
+                type: string
+                description: The AskNicely contact id created or updated.
+              email:
+                type: string
+                format: email
+              msg:
+                type: string
+    PrivacyRemoveRequest:
+      type: object
+      required:
+      - contacts
+      properties:
+        contacts:
+          type: array
+          description: Email addresses of the contacts to erase.
+          items:
+            type: string
+            format: email
+        skipnotify:
+          type: integer
+          default: 0
+          description: Set to 1 to suppress notifying the primary AskNicely user about the removal.
+    BulkContact:
+      type: object
+      required:
+      - email
+      description: Additional properties are custom data fields (suffix `_c`), and may carry an array of values for multi-value fields.
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        segment:
+          type: string
+      additionalProperties: true
+    ErrorEnvelope:
+      type: object
+      description: The AskNicely error envelope. Not RFC 9457 Problem Details.
+      properties:
+        success:
+          type: boolean
+          const: false
+        msg:
+          type: string
+          description: Human-readable error message.
+      required:
+      - success
+      - msg
+    UnsubscribedEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnsubscribedContact'
+    UnsubscribedContact:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The contact id.
+        email:
+          type: string
+          format: email
+        unsubscribetime:
+          type: string
+          description: Unix timestamp.
+    SuccessEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        msg:
+          type: string
+      required:
+      - success
+    TriggerSurveyRequest:
+      type: object
+      required:
+      - email
+      description: Any additional properties are treated as custom data fields. AskNicely recommends suffixing custom field names with `_c` (snake_case) to avoid collisions with reserved names.
+      properties:
+        email:
+          type: string
+          format: email
+          description: Contact email address.
+        name:
+          type: string
+          description: Full name. Alternatively send firstname and lastname.
+        firstname:
+          type: string
+        lastname:
+          type: string
+        addcontact:
+          type: boolean
+          description: When true the contact is only added/updated and no survey email is sent (leave sending to the daily scheduler). Set false to also send a survey where the global contact rules allow.
+        delayminutes:
+          type: integer
+          description: Delay the survey by this many minutes. Ignored for SMS, which always sends immediately.
+        triggeremail:
+          type: boolean
+          description: When true the API ALWAYS sends a survey, overriding all contact rules. Intended for development testing only — remove entirely in production. Setting it to false does not stop surveys being sent.
+        thendeactivate:
+          type: boolean
+          description: Deactivate the contact after the survey is sent so they are not picked up by the daily scheduler. Only works in conjunction with triggeremail=true.
+        segment:
+          type: string
+          description: The contact's segment.
+      additionalProperties: true
+    RateLimitError:
+      allOf:
+      - $ref: '#/components/schemas/ErrorEnvelope'
+      - type: object
+        properties:
+          type:
+            type: string
+            description: Which window was exceeded, e.g. req-10s or req-60s.
+          count:
+            type: integer
+            description: Requests made in the window.
+          limit:
+            type: integer
+            description: Requests permitted in the window.
+    ContactEnvelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Contact'
   parameters:
     SearchKey:
       name: key
